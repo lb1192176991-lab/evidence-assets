@@ -1,0 +1,2353 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="description" content="吐槽墙 - 全球匿名吐槽社区。不吐不快，匿名说出你想说的。支持中文、English、日本語、한국어、Français、Deutsch、Español、Português、Русский、العربية。">
+<meta name="keywords" content="吐槽,匿名吐槽,匿名社区,vent wall,anonymous venting,愚痴の壁,불평벽,发泄,树洞">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tucaowall.vip/">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192.svg">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="alternate" hreflang="zh" href="https://tucaowall.vip/">
+<link rel="alternate" hreflang="en" href="https://tucaowall.vip/?lang=en">
+<link rel="alternate" hreflang="ja" href="https://tucaowall.vip/?lang=ja">
+<link rel="alternate" hreflang="ko" href="https://tucaowall.vip/?lang=ko">
+<link rel="alternate" hreflang="x-default" href="https://tucaowall.vip/">
+<meta property="og:title" content="吐槽墙 · 全球匿名吐槽社区">
+<meta property="og:description" content="不吐不快 · 匿名说出你想说的。支持10种语言，全球网友都在用。">
+<meta property="og:url" content="https://tucaowall.vip/">
+<meta property="og:image" content="https://tucaowall.vip/api/og-image/0">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="吐槽墙">
+<title data-i18n="site_title">吐槽墙 · 全球匿名吐槽社区</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'PingFang SC','Microsoft YaHei',-apple-system,sans-serif;color:#fff;overflow-x:hidden;min-height:100vh}
+
+/* ===== 太空地球背景 ===== */
+#bg-wrap{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;overflow:hidden}
+#bg-wrap img{width:100%;height:100%;object-fit:cover;filter:brightness(0.6) saturate(1.4) contrast(1.05)}
+#bg-overlay{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;
+  background:radial-gradient(ellipse at center, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.2) 100%)}
+
+/* ===== 第一层：顶部 ===== */
+.top-bar{position:fixed;top:0;left:0;width:100%;z-index:30;display:flex;justify-content:space-between;align-items:center;padding:10px 20px}
+.top-left{display:flex;align-items:baseline;gap:10px}
+.top-left h1{font-size:2.4em;font-weight:900;letter-spacing:4px;
+  background:linear-gradient(135deg,#ff6b6b,#ffd93d,#6bcb77,#4d96ff);
+  background-size:400% 400%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:gradient 5s ease infinite;line-height:1;text-shadow:0 0 30px rgba(0,0,0,0.8)}
+.top-slogan{color:rgba(255,255,255,0.6);font-size:1em;text-shadow:0 0 15px rgba(0,0,0,0.8)}
+.top-right{display:flex;align-items:center;gap:10px}
+.lang-bar{display:flex;gap:2px}
+.lang-btn{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.5);padding:4px 12px;border-radius:6px;cursor:pointer;font-size:13px;transition:all 0.2s}
+.lang-btn:hover{color:#fff;border-color:rgba(255,255,255,0.35)}
+.lang-btn.active{color:#fff;border-color:#4d96ff;background:rgba(77,150,255,0.25)}
+.stats{color:rgba(255,255,255,0.3);font-size:0.85em;white-space:nowrap}
+
+/* ===== 第二层：弹幕区域（全屏） ===== */
+.danmaku-wrap{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:5;overflow:hidden}
+.danmaku-container{width:100%;height:100%;position:relative}
+.danmaku-track{width:100%;height:100%}
+
+.danmaku-msg{
+  position:absolute;white-space:nowrap;
+  border-radius:20px;cursor:pointer;
+  display:flex;align-items:center;gap:6px;
+  padding:3px 12px;
+  backface-visibility:hidden;will-change:transform}
+.danmaku-msg .prof-tag{font-size:10px;opacity:0.7;background:rgba(255,255,255,0.1);padding:1px 7px;border-radius:8px;font-weight:700}
+.danmaku-msg .nick{font-weight:700;letter-spacing:0.5px}
+.danmaku-msg .likes{opacity:0.5;margin-left:2px}
+.danmaku-msg .like-btn{cursor:pointer;opacity:0.4;transition:opacity 0.2s}
+.danmaku-msg .like-btn:hover{opacity:1}
+.danmaku-featured{box-shadow:0 0 20px rgba(255,215,0,0.4),0 0 40px rgba(255,215,0,0.2);border-color:rgba(255,215,0,0.6)!important}
+
+/* ===== 第三层：底部悬浮栏（浮动在底部，无分割） ===== */
+.bottom-bar{position:fixed;bottom:0;left:0;width:100%;z-index:30;
+  padding:16px 32px 16px;
+  display:flex;flex-direction:column;gap:8px;align-items:center}
+
+/* 左右两栏容器 */
+.bottom-row{display:flex;gap:16px;max-width:1100px;width:100%;margin:0 auto;align-items:flex-start}
+
+/* 左栏：汇总信息 */
+.bottom-left{flex:0 0 280px;display:flex;flex-direction:column;gap:8px}
+.bottom-left .stat-card{background:rgba(255,255,255,0.06);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:12px 16px}
+.bottom-left .stat-card .stat-label{color:rgba(255,255,255,0.4);font-size:12px}
+.bottom-left .stat-card .stat-value{color:#fff;font-size:20px;font-weight:700;margin-top:2px}
+.bottom-left .stat-row{display:flex;gap:8px}
+.bottom-left .stat-row .stat-card{flex:1}
+
+/* 右栏：输入+热点 */
+.bottom-right{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+
+/* 小屏幕：上下堆叠 */
+@media(max-width:768px){
+  .bottom-row{flex-direction:column}
+  .bottom-left{flex:none;width:100%}
+  .bottom-left .stat-card{padding:10px 14px}
+  .bottom-left .stat-value{font-size:16px!important}
+  .bottom-bar{padding:12px 16px}
+}
+
+.input-area{width:100%}
+.input-area textarea{width:100%;height:90px;
+  background:rgba(255,255,255,0.08);backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,0.15);border-radius:18px;
+  color:#fff;padding:14px 18px;font-size:18px;resize:none;outline:none;transition:all 0.3s}
+.input-area textarea:focus{border-color:rgba(255,107,107,0.5);background:rgba(255,255,255,0.12)}
+
+.tag-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.tag-select{display:flex;align-items:center;gap:4px;
+  background:rgba(255,255,255,0.12);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,0.25);border-radius:12px;
+  padding:8px 14px;font-size:14px;color:#fff;font-weight:500}
+.tag-select select{background:transparent;border:none;color:#fff;font-size:14px;outline:none;cursor:pointer;font-weight:500}
+.tag-select select option{background:#1a1a2e;color:#fff}
+.input-nick{flex:1;min-width:100px;height:40px;
+  background:rgba(255,255,255,0.1);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,0.18);border-radius:12px;
+  color:#fff;padding:8px 14px;outline:none;font-size:15px}
+.post-btn{
+  background:linear-gradient(135deg,#ff6b6b,#ff9f43);
+  border:none;padding:10px 32px;border-radius:12px;height:40px;
+  color:#fff;font-weight:700;font-size:16px;cursor:pointer;transition:all 0.2s;
+  box-shadow:0 4px 25px rgba(255,107,107,0.3)}
+.post-btn:hover{transform:scale(1.06)}
+
+/* 热点词 */
+.hot-area{width:100%}
+.hot-label{color:rgba(255,255,255,0.4);font-size:13px;margin-bottom:4px}
+.hot-tags{display:flex;flex-wrap:wrap;gap:6px}
+.hot-tag{border-radius:18px;padding:5px 14px;font-size:13px;cursor:pointer;transition:all 0.2s;font-weight:500;border:1px solid}
+
+/* 排行榜按钮 */
+.rank-bar{width:100%;display:flex;gap:8px;flex-wrap:wrap}
+.rank-btn{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:4px 14px;font-size:12px;color:rgba(255,255,255,0.5);cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;gap:4px}
+.rank-btn:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,107,107,0.4);color:#ff6b6b}
+
+/* 广告位 - 炫酷卡片（最下方通栏） */
+.ad-area{max-width:1100px;width:100%;margin:0 auto}
+.ad-card{background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);border-radius:14px;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;border:1px solid rgba(79,172,254,0.2);transition:all 0.2s}
+.ad-card:hover{border-color:rgba(79,172,254,0.5)}
+.ad-card h3{font-size:15px;background:linear-gradient(135deg,#4d96ff,#6bcb77);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.ad-card p{color:rgba(255,255,255,0.35);font-size:12px;margin-top:1px}
+.ad-card a{background:linear-gradient(135deg,#4d96ff,#6bcb77);padding:6px 18px;border-radius:8px;color:#fff;text-decoration:none;font-weight:600;font-size:13px;transition:all 0.2s;white-space:nowrap;box-shadow:0 4px 15px rgba(77,150,255,0.2)}
+.ad-card a:hover{transform:scale(1.05);box-shadow:0 6px 25px rgba(77,150,255,0.3)}
+
+/* 帖子列表面板 */
+.post-panel{max-width:850px;margin:10px auto 0;width:100%;max-height:300px;overflow:hidden;border-radius:16px;background:rgba(0,0,0,0.3);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.06)}
+.post-panel-header{display:flex;gap:0;border-bottom:1px solid rgba(255,255,255,0.06)}
+.post-panel-header span{padding:8px 20px;font-size:13px;cursor:pointer;color:rgba(255,255,255,0.4);transition:all 0.2s;border-bottom:2px solid transparent}
+.post-panel-header span.active{color:#fff;border-bottom-color:#4d96ff}
+.post-panel-list{overflow-y:auto;max-height:250px}
+.post-panel-list::-webkit-scrollbar{width:3px}
+.post-panel-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px}
+.pp-item{display:flex;align-items:center;gap:8px;padding:6px 14px;cursor:pointer;transition:background 0.15s;border-bottom:1px solid rgba(255,255,255,0.03)}
+.pp-item:hover{background:rgba(255,255,255,0.04)}
+.pp-item .pp-nick{font-size:12px;font-weight:600;white-space:nowrap;color:var(--pp-c)}
+.pp-item .pp-text{font-size:12px;color:rgba(255,255,255,0.55);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.pp-item .pp-likes{font-size:11px;color:rgba(255,255,255,0.25);white-space:nowrap}
+</style>
+</head>
+<body>
+
+<!-- 太空地球背景 -->
+<div id="bg-wrap">
+  <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&q=80" alt="Earth from space">
+</div>
+<div id="bg-overlay"></div>
+
+<!-- ===== 第一层：顶部网站名 ===== -->
+<div class="top-bar">
+  <div class="top-left">
+    <h1 data-i18n="site_name">吐 槽 墙</h1>
+    <span class="top-slogan" data-i18n="site_desc">不吐不快 · 匿名说出你想说的</span>
+  </div>
+  <div class="top-right">
+      <div class="lang-bar">
+        <button class="lang-btn" onclick="switchLang('zh')">🇨🇳</button>
+        <button class="lang-btn" onclick="switchLang('en')">🇺🇸</button>
+        <button class="lang-btn" onclick="switchLang('ja')">🇯🇵</button>
+        <button class="lang-btn" onclick="switchLang('ko')">🇰🇷</button>
+        <button class="lang-btn" onclick="switchLang('fr')">🇫🇷</button>
+        <button class="lang-btn" onclick="switchLang('de')">🇩🇪</button>
+        <button class="lang-btn" onclick="switchLang('es')">🇪🇸</button>
+        <button class="lang-btn" onclick="switchLang('pt')">🇧🇷</button>
+        <button class="lang-btn" onclick="switchLang('ru')">🇷🇺</button>
+        <button class="lang-btn" onclick="switchLang('ar')">🇸🇦</button>
+      </div>
+    <div class="stats" id="stats">💬 0</div>
+    <button class="lang-btn" onclick="showCheckinModal()" style="font-size:15px" title="签到">📅</button>
+    <button class="lang-btn" onclick="showReferralModal()" style="font-size:15px" title="邀请好友">🏆</button>
+    <button class="lang-btn" onclick="showShopModal()" style="font-size:16px;background:linear-gradient(135deg,#ffd70022,#ff6b6b22);border-color:rgba(255,215,0,0.3)" title="商店">💎 <span id="coin-balance-badge" style="font-size:12px;font-weight:700">0</span></button>
+    <button class="lang-btn" id="my-posts-btn" onclick="showMyPosts()" style="font-size:15px;display:none" title="我的帖子">📋</button>
+    <button class="lang-btn" id="notif-btn" onclick="showNotifications()" style="font-size:15px;display:none" title="通知">🔔</button>
+    <button class="lang-btn" id="login-btn" onclick="showAuthModal()" style="font-size:13px;border-color:rgba(77,150,255,0.3);color:#4d96ff" title="登录">👤 登录</button>
+  </div>
+</div>
+
+<!-- ===== 第二层：弹幕区域（最大面积） ===== -->
+<div class="danmaku-wrap">
+  <div class="danmaku-container">
+    <div class="danmaku-track" id="danmaku-track"></div>
+  </div>
+</div>
+
+<!-- ===== 第三层：底部固定栏（左右结构） ===== -->
+<div class="bottom-bar">
+  <!-- 左右两栏 -->
+  <div class="bottom-row">
+    <!-- 左栏：汇总信息 -->
+    <div class="bottom-left">
+      <div class="stat-card">
+        <div class="stat-label">📊 站点统计</div>
+        <div class="stat-row">
+          <div style="flex:1">
+            <div class="stat-label" style="font-size:11px">帖子</div>
+            <div class="stat-value" style="font-size:16px" id="stat-posts">0</div>
+          </div>
+          <div style="flex:1">
+            <div class="stat-label" style="font-size:11px">今日</div>
+            <div class="stat-value" style="font-size:16px" id="stat-today">0</div>
+          </div>
+          <div style="flex:1">
+            <div class="stat-label" style="font-size:11px">访客</div>
+            <div class="stat-value" style="font-size:16px" id="stat-visitors">0</div>
+          </div>
+        </div>
+      </div>
+      <!-- 分享解锁 + 排行按钮 -->
+      <div class="rank-bar">
+        <span class="rank-btn" onclick="if(confirm((i18n[currentLang]||{}).share_unlock_tip||'分享到社交平台后可解锁今日劲爆吐槽！')){showShareUnlock()}">🔓 <span data-i18n="unlock_btn">分享解锁</span></span>
+        <span class="rank-btn" onclick="showRanking()">🏆 排行榜</span>
+      </div>
+      <!-- 帖子列表面板 -->
+      <div class="post-panel" id="post-panel" style="display:none">
+        <div class="post-panel-header">
+          <span class="active" onclick="switchPanel('latest',this)" id="pp-latest">🕐 最新</span>
+          <span onclick="switchPanel('hot',this)" id="pp-hot">🔥 热门</span>
+          <span onclick="switchPanel('trending',this)" id="pp-trending">🔥 Trending</span>
+        </div>
+        <div class="post-panel-list" id="post-panel-list"></div>
+      </div>
+    </div>
+    
+    <!-- 右栏：输入 + 热点词 -->
+    <div class="bottom-right">
+      <!-- 输入框 + 标签 -->
+      <div class="input-area">
+        <textarea id="post-input" maxlength="500"></textarea>
+        <div class="tag-row">
+          <div class="tag-select"><span>👤</span><select id="profession-select"></select></div>
+          <div class="tag-select"><span>🎯</span><select id="target-select"></select></div>
+          <input class="input-nick" id="nick-input" maxlength="50" placeholder="昵称">
+          <button class="post-btn" onclick="submitPost()" data-i18n="post_btn">发射 🚀</button>
+        </div>
+        <div style="margin-top:4px;font-size:11px;color:rgba(255,255,255,0.35)" id="free-post-remaining">📝 今日剩余: <span id="free-count">3</span>/3</div>
+      </div>
+      
+      <!-- 热点词 -->
+      <div class="hot-area">
+        <div class="hot-label" data-i18n="hot_label">🔥 热门槽点</div>
+        <div class="hot-tags" id="hot-tags"></div>
+      </div>
+      
+      <!-- 搜索栏（在热点词下面，默认显示） -->
+      <div class="search-bar" id="search-bar">
+        <div style="display:flex;gap:6px">
+          <input id="search-input" data-i18n-placeholder="search_placeholder" placeholder="搜索吐槽内容..." maxlength="100" style="flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;padding:8px 12px;font-size:14px;outline:none">
+          <button onclick="doSearch()" data-i18n="search_btn" style="background:#4d96ff;border:none;color:#fff;padding:8px 14px;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px">搜索</button>
+        </div>
+        <div id="search-results" style="margin-top:6px;max-height:180px;overflow-y:auto;display:none"></div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 最下方：广告位通栏 -->
+  <div class="ad-area" id="ad-area">
+    <div class="ad-card" id="dynamic-ad" onclick="window.open(document.getElementById('ad-link').href,'_blank')" style="cursor:pointer">
+      <div>
+        <h3 id="ad-title" data-i18n="ad_title">💻 推荐：高性能VPS服务器</h3>
+        <p id="ad-desc" data-i18n="ad_desc">建站/VPN/项目部署，月付$2.99起，稳定不跑路</p>
+      </div>
+      <a id="ad-link" href="https://www.vultr.com/?ref=GxaNJMJNQ8C3" target="_blank" rel="noopener" data-i18n="ad_btn">🚀 去看看</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = window.location.origin;
+let allPosts = [];
+let currentLang = 'zh';
+// 全局鼠标追踪（给弹幕引擎用）
+let danmaku_mouseX = -9999, danmaku_mouseY = -9999;
+document.addEventListener('mousemove', function(e) {
+  danmaku_mouseX = e.clientX;
+  danmaku_mouseY = e.clientY;
+});
+
+// ===== Token认证管理 =====
+function getToken() { try { return localStorage.getItem('tucao_token') || ''; } catch(e){return '';} }
+function saveToken(t) { try { localStorage.setItem('tucao_token', t); } catch(e){} }
+function clearToken() { try { localStorage.removeItem('tucao_token'); } catch(e){} }
+function isLoggedIn() { return getToken().length > 10; }
+function authHeaders() {
+  const t = getToken();
+  return t ? {'Content-Type':'application/json', 'Authorization':'Bearer ' + t} : {'Content-Type':'application/json'};
+}
+
+// 页面加载时恢复登录态
+async function restoreLogin() {
+  if (!isLoggedIn()) return;
+  document.getElementById('login-btn').textContent = '👤 ...';
+  try {
+    const r = await fetch(API + '/api/auth/me', {headers:{'Authorization':'Bearer ' + getToken()}});
+    if (!r.ok) { clearToken(); updateLoginBtn(); return; }
+    const d = await r.json();
+    if (d.ok) {
+      document.getElementById('login-btn').textContent = '👤 ' + (d.user.nickname || '我');
+      document.getElementById('coin-balance-badge').textContent = (d.user.coin_balance || 0) > 999 ? '999+' : (d.user.coin_balance || 0);
+      document.getElementById('my-posts-btn').style.display = '';
+      document.getElementById('notif-btn').style.display = '';
+    } else {
+      clearToken();
+      updateLoginBtn();
+    }
+  } catch(e) { updateLoginBtn(); }
+}
+function updateLoginBtn() {
+  const btn = document.getElementById('login-btn');
+  btn.textContent = isLoggedIn() ? '👤 已登录' : '👤 登录';
+}
+
+// ===== 登录/注册弹窗 =====
+function showAuthModal() {
+  initShareUI();
+  // 如果已登录，显示登出选项
+  if (isLoggedIn()) {
+    if (confirm('已登录。要登出吗？')) {
+      fetch(API + '/api/auth/logout', {method:'POST', headers:{'Authorization':'Bearer ' + getToken()}}).catch(()=>{});
+      clearToken();
+      updateLoginBtn();
+      document.getElementById('coin-balance-badge').textContent = '0';
+    }
+    return;
+  }
+  
+  const overlay = document.createElement('div');
+  overlay.className = 'share-overlay auth-overlay';
+  overlay.onclick = () => { overlay.remove(); resetDanmakuHover(); };
+  overlay.innerHTML = `<div class="share-box" onclick="event.stopPropagation()" style="max-width:400px;padding:24px">
+    <button class="share-close" onclick="this.closest('.share-overlay').remove();resetDanmakuHover()">✕</button>
+    <h3 style="text-align:center;margin-bottom:16px;font-size:1.3em">👤 登录 / 注册</h3>
+    <p style="text-align:center;color:rgba(255,255,255,0.4);font-size:13px;margin-bottom:16px">登录后硬币余额持久保存，发帖/查看全文更方便</p>
+    <div id="auth-form" style="display:flex;flex-direction:column;gap:12px">
+      <input id="auth-nick" placeholder="昵称（唯一）" maxlength="50" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:#fff;padding:14px 16px;font-size:16px;outline:none">
+      <input id="auth-pass" type="password" placeholder="密码（4-20位）" maxlength="20" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:#fff;padding:14px 16px;font-size:16px;outline:none">
+      <div style="display:flex;gap:8px">
+        <button onclick="doLogin()" style="flex:1;background:#4d96ff;border:none;color:#fff;padding:12px;border-radius:10px;cursor:pointer;font-weight:700;font-size:15px">登录</button>
+        <button onclick="doRegister()" style="flex:1;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff;padding:12px;border-radius:10px;cursor:pointer;font-weight:700;font-size:15px">注册</button>
+      </div>
+      <div id="auth-error" style="text-align:center;color:#ff6b6b;font-size:13px;min-height:20px"></div>
+      <div style="position:relative;margin:8px 0;text-align:center">
+        <span style="background:#0a0a0a;padding:0 12px;color:rgba(255,255,255,0.3);font-size:12px;position:relative;z-index:1">或</span>
+        <hr style="border:none;border-top:1px solid rgba(255,255,255,0.08);position:relative;top:10px;z-index:0">
+      </div>
+      <button onclick="githubLogin()" style="width:100%;background:#24292e;border:1px solid rgba(255,255,255,0.15);color:#fff;padding:12px;border-radius:10px;cursor:pointer;font-weight:600;font-size:15px">🐙 使用 GitHub 登录</button>
+      <button onclick="googleLogin()" style="width:100%;background:#fff;border:1px solid rgba(255,255,255,0.15);color:#333;padding:12px;border-radius:10px;cursor:pointer;font-weight:600;font-size:15px;margin-top:6px">🔴 使用 Google 登录</button>
+      <button onclick="discordLogin()" style="width:100%;background:#5865f2;border:none;color:#fff;padding:12px;border-radius:10px;cursor:pointer;font-weight:600;font-size:15px;margin-top:6px">💬 使用 Discord 登录</button>
+    </div>
+  </div>`;
+  document.body.appendChild(overlay);
+  // 回车提交
+  setTimeout(() => {
+    const p = document.getElementById('auth-pass');
+    if (p) p.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+  }, 100);
+}
+
+async function doLogin() {
+  const nick = document.getElementById('auth-nick')?.value?.trim();
+  const pass = document.getElementById('auth-pass')?.value;
+  const errEl = document.getElementById('auth-error');
+  if (!nick || !pass) { errEl.textContent = '请填写昵称和密码'; return; }
+  try {
+    const r = await fetch(API + '/api/auth/login', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({nickname:nick, password:pass})});
+    const d = await r.json();
+    if (!r.ok) { errEl.textContent = d.error || '登录失败'; return; }
+    saveToken(d.user.token);
+    document.getElementById('login-btn').textContent = '👤 ' + (d.user.nickname || '我');
+    document.getElementById('coin-balance-badge').textContent = (d.user.coin_balance || 0) > 999 ? '999+' : (d.user.coin_balance || 0);
+    document.getElementById('my-posts-btn').style.display = '';
+    document.getElementById('notif-btn').style.display = '';
+    document.querySelector('.share-overlay')?.remove();
+    // 刷新免费额度
+    showFreePostRemaining();
+  } catch(e) { errEl.textContent = '网络错误'; }
+}
+
+async function doRegister() {
+  const nick = document.getElementById('auth-nick')?.value?.trim();
+  const pass = document.getElementById('auth-pass')?.value;
+  const errEl = document.getElementById('auth-error');
+  if (!nick || !pass || pass.length < 4) { errEl.textContent = '昵称必填，密码至少4位'; return; }
+  try {
+    const r = await fetch(API + '/api/auth/register', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({nickname:nick, password:pass})});
+    const d = await r.json();
+    if (!r.ok) { errEl.textContent = d.error || '注册失败'; return; }
+    saveToken(d.user.token);
+    document.getElementById('login-btn').textContent = '👤 ' + (d.user.nickname || '我');
+    document.getElementById('my-posts-btn').style.display = '';
+    document.getElementById('notif-btn').style.display = '';
+    document.querySelector('.share-overlay')?.remove();
+    showFreePostRemaining();
+    alert('✅ 注册成功！现在可以永久保存你的硬币了 🎉');
+  } catch(e) { errEl.textContent = '网络错误'; }
+}
+
+// ===== GitHub OAuth 登录 =====
+function githubLogin() {
+  fetch(API + '/api/auth/github/login')
+    .then(r => r.json())
+    .then(d => {
+      if (d.redirect_url) {
+        // 打开授权窗口
+        const w = window.open(d.redirect_url, 'social-oauth', 'width=600,height=700');
+      } else {
+        alert(d.error || '登录暂时不可用');
+      }
+    })
+    .catch(() => alert('网络错误'));
+}
+
+// ===== 通用社交登录函数 =====
+function googleLogin() { socialLogin('/api/auth/google/login'); }
+function discordLogin() { socialLogin('/api/auth/discord/login'); }
+
+function socialLogin(path) {
+  fetch(API + path)
+    .then(r => r.json())
+    .then(d => {
+      if (d.redirect_url) {
+        window.open(d.redirect_url, 'social-oauth', 'width=600,height=700');
+      } else {
+        alert(d.error || '登录暂时不可用');
+      }
+    })
+    .catch(() => alert('网络错误'));
+}
+
+// ===== 统一监听OAuth回调（GitHub/Google/Discord） =====
+window.addEventListener('message', function(e) {
+  if (e.data && e.data.type === 'social_oauth') {
+    const token = e.data.token;
+    const nickname = e.data.nickname;
+    if (token && token.length > 10) {
+      saveToken(token);
+      document.getElementById('login-btn').textContent = '👤 ' + (nickname || '用户');
+      document.getElementById('my-posts-btn').style.display = '';
+      document.getElementById('notif-btn').style.display = '';
+      document.querySelector('.share-overlay')?.remove();
+      showFreePostRemaining();
+    }
+  }
+});
+
+// ===== 多语言 =====
+const i18n = {
+  zh: {
+    site_title:'吐槽墙 · 不吐不快', site_name:'吐 槽 墙', site_desc:'不吐不快 · 匿名说出你想说的',
+    loading:'加载中...', post_btn:'发射 🚀',
+    ad_title:'💼 AI 视觉创作 · 接单中', ad_desc:'ComfyUI 工作流定制 / AI头像 / 电商产品图 · 24h交付',
+    ad_btn:'查看详情 →', services_title:'我能帮你什么',
+    svc1_title:'AI 头像/写真', svc1_price:'¥39 起', svc2_title:'工作流定制', svc2_price:'¥200 起',
+    svc3_title:'AI 视频制作', svc3_price:'¥500 起', svc4_title:'电商产品图', svc4_price:'¥299/套',
+    cta_title:'💬 有项目要合作？', cta_desc:'AI视觉创作、工作流定制、自动化方案，欢迎联系',
+    cta_btn:'立即询价 →', footer_slogan:'不吐不快 · 匿名 · 自由',
+    stats_posts:'条吐槽', stats_load_fail:'加载失败',
+    empty_posts:'还没有吐槽，沙发是你的 🛋️', empty_loading_fail:'加载失败，刷新试试',
+    post_empty_alert:'写点啥再发射 🚀', post_max_alert:'最多500字',
+    post_fail_alert:'发射失败，再试一次 🚀', post_anonymous:'匿名吐槽',
+    nick_placeholder:'昵称',
+    search_placeholder:'搜索吐槽内容...', search_btn:'搜索',
+    contact_btn:'📧 联系站长',
+    share_title:'分享吐槽', copy_link:'复制链接', copied:'已复制！',
+    rank_btn:'🏆 今日热榜', unlock_btn:'🔓 分享解锁劲爆吐槽', share_unlock_tip:'分享到社交平台后可解锁今日劲爆吐槽！',
+    rank_title:'🏆 今日吐槽排行榜', rank_likes:'赞', rank_empty:'还没有吐槽上榜，快来发一个！',
+    unlock_title:'🔓 今日劲爆吐槽', unlock_tip:'分享到社交平台解锁', unlock_btn_share:'去分享 →', unlock_content:'👻 恭喜解锁！今日劲爆吐槽：\n\n「你永远叫不醒一个装睡的人，但你可以扣他工资。」\n\n—— 来自某打工人\n\n分享给朋友一起来吐槽吧！',
+    hot_label:'🔥 热门槽点 · 点击一键吐槽',
+    prof_select:'我是', target_select:'吐槽对象',
+    prof_opts:['打工人','学生党','程序员','设计师','产品经理','运营狗','创业者','教师','医生','自由职业','全职妈妈','已退休','其他'],
+    tgt_opts:['老板','同事','甲方','产品经理','996/加班','薪资待遇','公司制度','社会现象','明星八卦','政治新闻','国际关系','教育制度','医疗体系','房价物价','交通出行','互联网','科技产品','游戏','影视剧','自己'],
+    hot_items:['周一又要上班了😭','甲方改需求第8版','996真的受够了','工资不涨物价涨','老板画饼日常','产品经理又作妖','坐地铁挤成肉饼','租房又被坑了','35岁危机焦虑','AI要取代我了']
+  },
+  en: {
+    site_title:'Vent Wall · Speak Your Mind', site_name:'V E N T  W A L L', site_desc:'Speak your mind · Anonymous venting',
+    loading:'Loading...', post_btn:'Launch 🚀',
+    ad_title:'💼 AI Visual Creation · Open', ad_desc:'ComfyUI workflows / AI avatars / Product images · 24h delivery',
+    ad_btn:'Details →', services_title:'Services',
+    svc1_title:'AI Avatar', svc1_price:'From $5', svc2_title:'Workflow Custom', svc2_price:'From $28',
+    svc3_title:'AI Video', svc3_price:'From $70', svc4_title:'E-Com Images', svc4_price:'$40/set',
+    cta_title:'💬 Got a Project?', cta_desc:'AI creation, custom workflows, automation',
+    cta_btn:'Get a Quote →', footer_slogan:'Speak freely · Anonymous · Free',
+    stats_posts:'posts', stats_load_fail:'Load failed',
+    empty_posts:'No posts yet. Be the first! 🛋️', empty_loading_fail:'Load failed, refresh',
+    post_empty_alert:'Write something 🚀', post_max_alert:'Max 500 chars',
+    post_fail_alert:'Failed to post 🚀', post_anonymous:'Anonymous',
+    nick_placeholder:'Nickname',
+    search_placeholder:'Search posts...', search_btn:'Search',
+    contact_btn:'📧 Contact',
+    share_title:'Share this vent', copy_link:'Copy link', copied:'Copied!',
+    rank_btn:'🏆 Hot List', unlock_btn:'🔓 Share to Unlock', share_unlock_tip:'Share to unlock today\'s hottest vent!',
+    rank_title:'🏆 Today\'s Hottest Vents', rank_likes:'likes', rank_empty:'No posts yet. Be the first!',
+    unlock_title:'🔓 Today\'s Secret Vent', unlock_tip:'Share to unlock', unlock_btn_share:'Share Now →', unlock_content:'👻 Congrats! Today\'s secret vent:\\n\\n"You can\'t wake a person who is pretending to sleep, but you can deduct their salary."\\n\\n— Anonymous\\n\\nShare with friends and vent together!',
+    hot_label:'🔥 Hot vents · Click to post',
+    prof_select:'I am', target_select:'About',
+    prof_opts:['Worker','Student','Programmer','Designer','PM','Marketer','Founder','Teacher','Doctor','Freelancer','Homemaker','Retired','Other'],
+    tgt_opts:['Boss','Coworker','Client','PM','Overtime','Salary','Company','Society','Celebrity','Politics','World','Education','Healthcare','Housing','Traffic','Internet','Tech','Gaming','Movies','Myself'],
+    hot_items:['Monday blues again 😭','Client changed reqs AGAIN','Overworked & underpaid','Rent is killing me','Why is everything so expensive','My boss is a joke','Commute from hell','AI is coming for my job','Inflation is crazy','Need a vacation ASAP']
+  },
+  ja: {
+    site_title:'愚痴の壁', site_name:'愚 痴 の 壁', site_desc:'言いたいことを言おう · 匿名で自由に',
+    loading:'読込中...', post_btn:'投稿 🚀',
+    ad_title:'💼 AI制作受注中', ad_desc:'ComfyUI / AI画像/動画 · 24h納品',
+    ad_btn:'詳細 →', services_title:'サービス',
+    svc1_title:'AIアバター', svc1_price:'¥39〜', svc2_title:'WF作成', svc2_price:'¥200〜',
+    svc3_title:'AI動画', svc3_price:'¥500〜', svc4_title:'EC画像', svc4_price:'¥299/セット',
+    cta_title:'💬 ご依頼は？', cta_desc:'AI制作、ワークフロー、自動化',
+    cta_btn:'見積もり →', footer_slogan:'自由に発言 · 匿名 · 無料',
+    stats_posts:'件', stats_load_fail:'失敗',
+    empty_posts:'まだ投稿なし 🛋️', empty_loading_fail:'失敗、再読込',
+    post_empty_alert:'何か書いてね 🚀', post_max_alert:'最大500字',
+    post_fail_alert:'失敗しました 🚀', post_anonymous:'匿名さん',
+    nick_placeholder:'名前',
+    search_placeholder:'投稿を検索...', search_btn:'検索',
+    contact_btn:'📧 連絡',
+    share_title:'シェア', copy_link:'リンクをコピー', copied:'コピー完了！',
+    rank_btn:'🏆 今日のランキング', unlock_btn:'🔓 シェアで解除', share_unlock_tip:'SNSでシェアすると今日の激ヤバ愚痴が！',
+    rank_title:'🏆 今日の愚痴ランキング', rank_likes:'いいね', rank_empty:'まだ投稿なし！',
+    unlock_title:'🔓 今日の激ヤバ愚痴', unlock_tip:'シェアで解除', unlock_btn_share:'シェアする →', unlock_content:'👻 解除成功！今日の激ヤバ愚痴：\\n\\n「寝たふりしてる人は起こせないけど、給料は引ける。」\\n\\n—— 某会社員\\n\\n友達と一緒に愚痴ろう！',
+    hot_label:'🔥 話題 · クリックで投稿',
+    prof_select:'私は', target_select:'対象',
+    prof_opts:['会社員','学生','エンジニア','デザイナー','PM','マーケター','起業家','教師','医者','フリーランス','主婦','シニア','その他'],
+    tgt_opts:['上司','同僚','客先','PM','長時間労働','給料','社内制度','社会','芸能人','政治','国際','教育','医療','物価','交通','ネット','テクノロジー','ゲーム','ドラマ','自分'],
+    hot_items:['また月曜か😭','客がまた仕様変更','残業代出ない','給料上がらない','上司の話が長い','満員電車地獄','家賃高すぎ','AIに仕事取られる','転職したい','休暇欲しい']
+  },
+  ko: {
+    site_title:'불평벽', site_name:'불 평 벽', site_desc:'하고 싶은 말을 하세요 · 익명으로',
+    loading:'로딩중...', post_btn:'발사 🚀',
+    ad_title:'💼 AI 제작 주문 받음', ad_desc:'ComfyUI / AI 이미지/영상 · 24h 납품',
+    ad_btn:'자세히 →', services_title:'서비스',
+    svc1_title:'AI 아바타', svc1_price:'¥39~', svc2_title:'WF 제작', svc2_price:'¥200~',
+    svc3_title:'AI 영상', svc3_price:'¥500~', svc4_title:'EC 이미지', svc4_price:'¥299/세트',
+    cta_title:'💬 프로젝트 문의', cta_desc:'AI 제작, 워크플로우, 자동화',
+    cta_btn:'문의하기 →', footer_slogan:'자유로운 발언 · 익명 · 무료',
+    stats_posts:'개', stats_load_fail:'실패',
+    empty_posts:'첫 게시물을 남겨보세요 🛋️', empty_loading_fail:'실패, 새로고침',
+    post_empty_alert:'내용을 입력하세요 🚀', post_max_alert:'최대 500자',
+    post_fail_alert:'실패했습니다 🚀', post_anonymous:'익명',
+    nick_placeholder:'닉네임',
+    search_placeholder:'게시물 검색...', search_btn:'검색',
+    contact_btn:'📧 문의',
+    share_title:'공유하기', copy_link:'링크 복사', copied:'복사됨!',
+    rank_btn:'🏆 오늘의 순위', unlock_btn:'🔓 공유하고 잠금해제', share_unlock_tip:'SNS에 공유하면 오늘의 충격적인 불평 공개!',
+    rank_title:'🏆 오늘의 불평 순위', rank_likes:'좋아요', rank_empty:'아직 없음!',
+    unlock_title:'🔓 오늘의 충격 불평', unlock_tip:'공유로 잠금해제', unlock_btn_share:'공유하기 →', unlock_content:'👻 잠금해제 성공! 오늘의 충격 불평：\\n\\n「자는 척하는 사람은 깨울 수 없지만 월급은 깎을 수 있다.」\\n\\n—— 직장인\\n\\n친구와 함께 불평해보자!',
+    hot_label:'🔥 인기 · 클릭投稿',
+    prof_select:'나는', target_select:'대상',
+    prof_opts:['직장인','학생','개발자','디자이너','PM','마케터','창업자','교사','의사','프리랜서','주부','은퇴','기타'],
+    tgt_opts:['상사','동료','클라이언트','PM','야근','월급','회사','사회','연예인','정치','국제','교육','의료','물가','교통','인터넷','테크','게임','드라마','자기자신'],
+    hot_items:['또 월요일😭','클라이언트 또 변경','야근수당 안 나와','물가 미침','상사가 짜증나','출퇴근 지옥','월세 비싸','AI가 일자리 뺏음','이직하고파','휴가가 필요해']
+  },
+  fr: {
+    site_title:'Mur à Confessions · Dites tout', site_name:'M U R  À  C O N F',
+    site_desc:'Dites ce que vous pensez · Anonyme et libre',
+    loading:'Chargement...', post_btn:'Lancer 🚀',
+    ad_title:'💼 Création AI · Commandes ouvertes', ad_desc:'Workflows ComfyUI / Avatars AI / Images produits · Livraison 24h',
+    ad_btn:'Détails →', services_title:'Mes services',
+    svc1_title:'Avatar AI', svc1_price:'À partir de 5€', svc2_title:'Workflow sur mesure', svc2_price:'À partir de 28€',
+    svc3_title:'Vidéo AI', svc3_price:'À partir de 70€', svc4_title:'Images e-commerce', svc4_price:'40€/lot',
+    cta_title:'💬 Un projet ?', cta_desc:'Création AI, workflows, automatisation',
+    cta_btn:'Devis →', footer_slogan:'Libre · Anonyme · Gratuit',
+    stats_posts:'messages', stats_load_fail:'Échec', empty_posts:'Soyez le premier ! 🛋️',
+    post_empty_alert:'Écrivez qqch 🚀', post_max_alert:'Max 500 car.', post_fail_alert:'Échec 🚀',
+    post_anonymous:'Anonyme', nick_placeholder:'Pseudo',
+    search_placeholder:'Rechercher...', search_btn:'Rechercher',
+    contact_btn:'📧 Contact',
+    share_title:'Partager', copy_link:'Copier', copied:'Copié !',
+    hot_label:'🔥 Sujets chauds', prof_select:'Je suis', target_select:'Cible',
+    prof_opts:['Employé','Étudiant','Dev','Designer','PM','Marketeur','Entrepreneur','Prof','Médecin','Freelance','Maman','Retraité','Autre'],
+    tgt_opts:['Patron','Collègue','Client','PM','Heures sup','Salaire','Boîte','Société','People','Politique','Monde','Éducation','Santé','Logement','Transport','Internet','Tech','Jeux','Films','Moi'],
+    hot_items:['Lundi déprime 😭','Client change tout','Faut des heures sup','Salaire trop bas','Patron raconte nimporte quoi','Métro bondé','Loyer trop cher','IA va me remplacer','Envie de démissionner','Besoin de vacances']
+  },
+  de: {
+    site_title:'Meckerwand · Sag was dich stört', site_name:'M E C K E R W A N D',
+    site_desc:'Sag was dich stört · Anonym und frei',
+    loading:'Laden...', post_btn:'Abschicken 🚀',
+    ad_title:'💼 KI-Erstellung · Aufträge offen', ad_desc:'ComfyUI Workflows / KI-Avatare / Produktbilder · 24h Lieferung',
+    ad_btn:'Details →', services_title:'Meine Dienste',
+    svc1_title:'KI-Avatar', svc1_price:'ab 5€', svc2_title:'Workflow Maßanfertigung', svc2_price:'ab 28€',
+    svc3_title:'KI-Video', svc3_price:'ab 70€', svc4_title:'E-Commerce Bilder', svc4_price:'40€/Set',
+    cta_title:'💬 Ein Projekt?', cta_desc:'KI-Erstellung, Workflows, Automatisierung',
+    cta_btn:'Angebot →', footer_slogan:'Frei · Anonym · Kostenlos',
+    stats_posts:'Beiträge', stats_load_fail:'Fehler', empty_posts:'Noch nichts da 🛋️',
+    post_empty_alert:'Schreib was 🚀', post_max_alert:'Max 500 Zeichen', post_fail_alert:'Fehlgeschlagen 🚀',
+    post_anonymous:'Anonym', nick_placeholder:'Name',
+    search_placeholder:'Beiträge suchen...', search_btn:'Suche',
+    contact_btn:'📧 Kontakt',
+    share_title:'Teilen', copy_link:'Link kopieren', copied:'Kopiert!',
+    hot_label:'🔥 Heiße Themen', prof_select:'Ich bin', target_select:'Ziel',
+    prof_opts:['Angestellter','Student','Programmierer','Designer','PM','Vermarkter','Gründer','Lehrer','Arzt','Freelancer','Hausfrau','Rentner','Andere'],
+    tgt_opts:['Chef','Kollege','Kunde','PM','Überstunden','Gehalt','Firma','Gesellschaft','Promis','Politik','Welt','Bildung','Gesundheit','Miete','Verkehr','Internet','Technik','Spiele','Filme','Mich'],
+    hot_items:['Montag schon wieder 😭','Kunde ändert alles','Überstunden ohne Bezahlung','Gehalt zu niedrig','Chef labert','U-Bahn voll','Miete zu teuer','KI nimmt Job weg','Kündigen will','Urlaub nötig']
+  },
+  es: {
+    site_title:'Muro de Desahogo · Di lo que piensas', site_name:'M U R O  D E S A H O G O',
+    site_desc:'Di lo que piensas · Anónimo y libre',
+    loading:'Cargando...', post_btn:'Lanzar 🚀',
+    ad_title:'💼 Creación AI · Pedidos abiertos', ad_desc:'Workflows ComfyUI / Avatares AI / Imágenes producto · 24h entrega',
+    ad_btn:'Detalles →', services_title:'Mis servicios',
+    svc1_title:'Avatar AI', svc1_price:'Desde 5€', svc2_title:'Workflow personalizado', svc2_price:'Desde 28€',
+    svc3_title:'Video AI', svc3_price:'Desde 70€', svc4_title:'Imágenes e-commerce', svc4_price:'40€/lote',
+    cta_title:'💬 ¿Un proyecto?', cta_desc:'Creación AI, workflows, automatización',
+    cta_btn:'Cotizar →', footer_slogan:'Libre · Anónimo · Gratis',
+    stats_posts:'mensajes', stats_load_fail:'Error', empty_posts:'Sé el primero 🛋️',
+    post_empty_alert:'Escribe algo 🚀', post_max_alert:'Máx 500 car.', post_fail_alert:'Falló 🚀',
+    post_anonymous:'Anónimo', nick_placeholder:'Apodo',
+    search_placeholder:'Buscar...', search_btn:'Buscar',
+    contact_btn:'📧 Contacto',
+    share_title:'Compartir', copy_link:'Copiar enlace', copied:'¡Copiado!',
+    hot_label:'🔥 Temas calientes', prof_select:'Soy', target_select:'Objetivo',
+    prof_opts:['Empleado','Estudiante','Programador','Diseñador','PM','Marketinero','Emprendedor','Profesor','Médico','Freelance','Ama de casa','Jubilado','Otro'],
+    tgt_opts:['Jefe','Compañero','Cliente','PM','Horas extra','Sueldo','Empresa','Sociedad','Celebridad','Política','Mundo','Educación','Sanidad','Vivienda','Tráfico','Internet','Tecnología','Juegos','Cine','Mí mismo'],
+    hot_items:['Lunes otra vez 😭','Cliente cambia todo','Horas extra sin pagar','Sueldo no alcanza','Jefe puro cuento','Metro lleno','Alquiler carísimo','IA me va a reemplazar','Quiero renunciar','Necesito vacaciones']
+  },
+  pt: {
+    site_title:'Muro do Desabafo · Fale o que pensa', site_name:'M U R O  D E S A B A F O',
+    site_desc:'Fale o que pensa · Anônimo e livre',
+    loading:'Carregando...', post_btn:'Lançar 🚀',
+    ad_title:'💼 Criação AI · Pedidos abertos', ad_desc:'Workflows ComfyUI / Avatares AI / Imagens produto · 24h entrega',
+    ad_btn:'Detalhes →', services_title:'Meus serviços',
+    svc1_title:'Avatar AI', svc1_price:'A partir de R$25', svc2_title:'Workflow personalizado', svc2_price:'A partir de R$140',
+    svc3_title:'Vídeo AI', svc3_price:'A partir de R$350', svc4_title:'Imagens e-commerce', svc4_price:'R$200/lote',
+    cta_title:'💬 Um projeto?', cta_desc:'Criação AI, workflows, automação',
+    cta_btn:'Orçamento →', footer_slogan:'Livre · Anônimo · Grátis',
+    stats_posts:'posts', stats_load_fail:'Falha', empty_posts:'Seja o primeiro 🛋️',
+    post_empty_alert:'Escreva algo 🚀', post_max_alert:'Máx 500 car.', post_fail_alert:'Falhou 🚀',
+    post_anonymous:'Anônimo', nick_placeholder:'Apelido',
+    search_placeholder:'Pesquisar...', search_btn:'Pesquisar',
+    contact_btn:'📧 Contato',
+    share_title:'Compartilhar', copy_link:'Copiar link', copied:'Copiado!',
+    hot_label:'🔥 Tópicos quentes', prof_select:'Sou', target_select:'Alvo',
+    prof_opts:['Funcionário','Estudante','Programador','Designer','PM','Marketeiro','Empreendedor','Professor','Médico','Freelancer','Dona de casa','Aposentado','Outro'],
+    tgt_opts:['Chefe','Colega','Cliente','PM','Hora extra','Salário','Empresa','Sociedade','Celebridade','Política','Mundo','Educação','Saúde','Moradia','Trânsito','Internet','Tecnologia','Jogos','Filmes','Eu mesmo'],
+    hot_items:['Segunda feira 😭','Cliente mudou tudo','Hora extra sem pagar','Salário não dá','Chefe só enrola','Metrô lotado','Aluguel caro','IA vai me substituir','Quero pedir demissão','Preciso de férias']
+  },
+  ru: {
+    site_title:'Стена жалоб · Выскажись', site_name:'С Т Е Н А  Ж А Л О Б',
+    site_desc:'Выскажись · Анонимно и свободно',
+    loading:'Загрузка...', post_btn:'Отправить 🚀',
+    ad_title:'💼 AI создание · Заказы открыты', ad_desc:'Workflows ComfyUI / AI аватары / Товарные фото · 24ч доставка',
+    ad_btn:'Подробнее →', services_title:'Мои услуги',
+    svc1_title:'AI аватар', svc1_price:'от 5€', svc2_title:'Workflow на заказ', svc2_price:'от 28€',
+    svc3_title:'AI видео', svc3_price:'от 70€', svc4_title:'Товарные фото', svc4_price:'40€/набор',
+    cta_title:'💬 Есть проект?', cta_desc:'AI создание, Workflows, автоматизация',
+    cta_btn:'Запрос →', footer_slogan:'Свободно · Анонимно · Бесплатно',
+    stats_posts:'сообщений', stats_load_fail:'Ошибка', empty_posts:'Будь первым 🛋️',
+    post_empty_alert:'Напиши что-нибудь 🚀', post_max_alert:'Макс 500 символов', post_fail_alert:'Ошибка 🚀',
+    post_anonymous:'Аноним', nick_placeholder:'Имя',
+    search_placeholder:'Поиск...', search_btn:'Поиск',
+    contact_btn:'📧 Контакт',
+    share_title:'Поделиться', copy_link:'Копировать', copied:'Скопировано!',
+    hot_label:'🔥 Горячие темы', prof_select:'Я', target_select:'Объект',
+    prof_opts:['Работник','Студент','Программист','Дизайнер','PM','Маркетолог','Предприниматель','Учитель','Врач','Фрилансер','Домохозяйка','Пенсионер','Другое'],
+    tgt_opts:['Начальник','Коллега','Клиент','PM','Переработки','Зарплата','Компания','Общество','Знаменитости','Политика','Мир','Образование','Медицина','Жильё','Транспорт','Интернет','Технологии','Игры','Кино','Себя'],
+    hot_items:['Опять понедельник 😭','Клиент всё меняет','Переработки бесплатно','Зарплата маленькая','Начальник несёт чушь','Метро битком','Аренда дорогая','AI заберёт работу','Хочу уволиться','Нужен отпуск']
+  },
+  ar: {
+    site_title:'جدار الشكوى · قل ما تريد', site_name:'ج د ا ر  ا ل ش ك و ى',
+    site_desc:'قل ما تريد · مجهول وبحرية',
+    loading:'جار التحميل...', post_btn:'إرسال 🚀',
+    ad_title:'💼 إنشاء AI · الطلبات مفتوحة', ad_desc:'سير عمل ComfyUI / صور AI / صور المنتجات · تسليم 24 ساعة',
+    ad_btn:'تفاصيل →', services_title:'خدماتي',
+    svc1_title:'صورة AI', svc1_price:'من 5€', svc2_title:'سير عمل مخصص', svc2_price:'من 28€',
+    svc3_title:'فيديو AI', svc3_price:'من 70€', svc4_title:'صور تجارية', svc4_price:'40€/مجموعة',
+    cta_title:'💬 لديك مشروع؟', cta_desc:'إنشاء AI، سير عمل، أتمتة',
+    cta_btn:'اطلب عرض سعر →', footer_slogan:'حرية · مجهول · مجاني',
+    stats_posts:'منشور', stats_load_fail:'فشل', empty_posts:'كن الأول 🛋️',
+    post_empty_alert:'اكتب شيئاً 🚀', post_max_alert:'الحد الأقصى 500 حرف', post_fail_alert:'فشل الإرسال 🚀',
+    post_anonymous:'مجهول', nick_placeholder:'اللقب',
+    search_placeholder:'بحث...', search_btn:'بحث',
+    contact_btn:'📧 اتصل',
+    share_title:'مشاركة', copy_link:'نسخ الرابط', copied:'تم النسخ!',
+    hot_label:'🔥 مواضيع رائجة', prof_select:'أنا', target_select:'الهدف',
+    prof_opts:['موظف','طالب','مبرمج','مصمم','مدير منتج','مسوق','رائد أعمال','معلم','طبيب','مستقل','ربة منزل','متقاعد','آخر'],
+    tgt_opts:['مدير','زميل','عميل','مدير منتج','دوام إضافي','راتب','شركة','مجتمع','مشاهير','سياسة','عالم','تعليم','صحة','سكن','مواصلات','إنترنت','تقنية','ألعاب','أفلام','نفسي'],
+    hot_items:['الإثنين مرة أخرى 😭','العميل غير كل شيء','دوام إضافي بدون أجر','الراتب لا يكفي','المدير يهذي','المترو مزدحم','الإيجار غالي','AI سيأخذ وظيفتي','أريد الاستقالة','أحتاج إجازة']
+}
+};
+
+function switchLang(lang) {
+  currentLang = lang; const t = i18n[lang];
+  document.querySelectorAll('[data-i18n]').forEach(el => { const k=el.getAttribute('data-i18n'); if(t[k]!==undefined) el.textContent=t[k]; });
+  // 更新 placeholder 翻译
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { const k=el.getAttribute('data-i18n-placeholder'); if(t[k]!==undefined) el.placeholder=t[k]; });
+  document.documentElement.lang = lang==='zh'?'zh-CN':lang; document.title=t.site_title;
+  document.querySelectorAll('.lang-btn').forEach((b,i)=>b.classList.toggle('active',['zh','en','ja','ko','fr','de','es','pt','ru','ar'][i]===lang));
+  try{localStorage.setItem('tucao_lang',lang)}catch(e){}
+  updateSelectors(); updateHotTags(); updateStats();
+}
+function detectLang() {
+  try{const s=localStorage.getItem('tucao_lang');if(s&&i18n[s])return s}catch(e){}
+  const l=(navigator.language||'').toLowerCase();
+  if(l.startsWith('ja'))return'ja';if(l.startsWith('ko'))return'ko';
+  if(l.startsWith('zh'))return'zh';if(l.startsWith('fr'))return'fr';
+  if(l.startsWith('de'))return'de';if(l.startsWith('es'))return'es';
+  if(l.startsWith('pt'))return'pt';if(l.startsWith('ru'))return'ru';
+  if(l.startsWith('ar'))return'ar';return'en';
+}
+
+function updateSelectors() {
+  const t=i18n[currentLang];
+  const pEl=document.getElementById('profession-select');
+  pEl.innerHTML=`<option value="">${t.prof_select}</option>`+t.prof_opts.map(v=>`<option value="${v}">${v}</option>`).join('');
+  const tEl=document.getElementById('target-select');
+  tEl.innerHTML=`<option value="">${t.target_select}</option>`+t.tgt_opts.map(v=>`<option value="${v}">${v}</option>`).join('');
+  document.getElementById('nick-input').placeholder=t.nick_placeholder;
+}
+
+function updateHotTags() {
+  const t=i18n[currentLang];
+  const hotColors = [
+    {bg:'rgba(255,107,107,0.12)',border:'rgba(255,107,107,0.3)',color:'#ff6b6b'},
+    {bg:'rgba(255,217,61,0.12)',border:'rgba(255,217,61,0.3)',color:'#ffd93d'},
+    {bg:'rgba(107,203,119,0.12)',border:'rgba(107,203,119,0.3)',color:'#6bcb77'},
+    {bg:'rgba(77,150,255,0.12)',border:'rgba(77,150,255,0.3)',color:'#4d96ff'},
+    {bg:'rgba(168,85,247,0.12)',border:'rgba(168,85,247,0.3)',color:'#a855f7'},
+    {bg:'rgba(255,159,67,0.12)',border:'rgba(255,159,67,0.3)',color:'#ff9f43'},
+    {bg:'rgba(244,67,54,0.12)',border:'rgba(244,67,54,0.3)',color:'#f44336'},
+    {bg:'rgba(0,188,212,0.12)',border:'rgba(0,188,212,0.3)',color:'#00bcd4'},
+    {bg:'rgba(233,30,99,0.12)',border:'rgba(233,30,99,0.3)',color:'#e91e63'},
+    {bg:'rgba(76,175,80,0.12)',border:'rgba(76,175,80,0.3)',color:'#4caf50'},
+  ];
+  document.getElementById('hot-tags').innerHTML=t.hot_items.map((item,i)=>{
+    const c=hotColors[i%hotColors.length];
+    return `<span class="hot-tag" style="background:${c.bg};border-color:${c.border};color:${c.color}" onclick="useHotTopic('${esc(item)}')">${esc(item)}</span>`;
+  }).join('');
+}
+function useHotTopic(t){document.getElementById('post-input').value=t;document.getElementById('post-input').focus()}
+
+function updateStats() {
+  const t=i18n[currentLang];
+  document.getElementById('stats').textContent=`💬 ${allPosts.length} ${t.stats_posts}`;
+  // 更新左栏统计数据
+  try{
+    fetch(API+'/api/stats').then(r=>r.json()).then(d=>{
+      const p=document.getElementById('stat-posts'); if(p) p.textContent=d.total_posts||allPosts.length;
+      const v=document.getElementById('stat-visitors'); if(v) v.textContent=d.unique_visitors||'?';
+    }).catch(()=>{});
+    // 计算今日帖子数（粗略）
+    const today = new Date().toDateString();
+    const todayPosts = allPosts.filter(p => p.created_at && new Date(p.created_at).toDateString() === today).length;
+    const td=document.getElementById('stat-today'); if(td) td.textContent=todayPosts||0;
+  }catch(e){}
+}
+
+// ===== 帖子列表面板 =====
+let panelMode = 'latest';
+let trendingCache = null;
+function switchPanel(mode, el) {
+  panelMode = mode;
+  document.querySelectorAll('.post-panel-header span').forEach(s => s.classList.remove('active'));
+  if (el) el.classList.add('active');
+  renderPanel();
+}
+
+// ===== 搜索 =====
+function toggleSearch() {
+  const bar = document.getElementById('search-bar');
+  if (bar) bar.style.display = bar.style.display === 'none' ? 'block' : 'none';
+  if (bar.style.display === 'block') setTimeout(() => document.getElementById('search-input')?.focus(), 100);
+}
+async function doSearch() {
+  const q = document.getElementById('search-input')?.value?.trim();
+  const results = document.getElementById('search-results');
+  if (!q) { results.style.display = 'none'; return; }
+  results.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,0.3);padding:10px">搜索中...</div>';
+  results.style.display = 'block';
+  try {
+    const r = await fetch(API + '/api/posts/search?q=' + encodeURIComponent(q));
+    const d = await r.json();
+    if (!d.posts || d.posts.length === 0) {
+      results.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,0.3);padding:10px">没有找到相关吐槽</div>';
+      return;
+    }
+    results.innerHTML = d.posts.map(p =>
+      `<div onclick="unlockAndShowPost(Object.assign({},p,${JSON.stringify(p)}))" style="padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer;font-size:14px">
+        <span style="color:${p.color||'#4d96ff'}">${esc(p.nickname||'')}</span>: ${esc((p.content||'').length > 50 ? p.content.slice(0,50)+'...' : p.content)}
+        <span style="color:rgba(255,255,255,0.3);font-size:12px;margin-left:8px">❤️ ${p.likes||0}</span>
+      </div>`
+    ).join('');
+  } catch(e) { results.innerHTML = '<div style="text-align:center;color:#ff6b6b;padding:10px">搜索失败</div>'; }
+}
+function renderPanel() {
+  const list = document.getElementById('post-panel-list');
+  if (!list) return;
+  const t = i18n[currentLang];
+  if (panelMode === 'trending') {
+    list.innerHTML = '<div style="padding:20px;text-align:center;color:rgba(255,255,255,0.3);font-size:13px">加载中...</div>';
+    fetch(API + '/api/posts/trending').then(r=>r.json()).then(posts => {
+      trendingCache = posts;
+      renderTrendingList(list, posts, t);
+    }).catch(() => {
+      list.innerHTML = '<div style="padding:20px;text-align:center;color:rgba(255,255,255,0.2);font-size:13px">加载失败</div>';
+    });
+    return;
+  }
+  let posts = [...allPosts];
+  if (panelMode === 'hot') posts.sort((a,b) => (b.likes||0) - (a.likes||0));
+  if (posts.length === 0) { list.innerHTML = '<div style="padding:20px;text-align:center;color:rgba(255,255,255,0.2);font-size:13px">暂无吐槽</div>'; return; }
+  const COLORS = ['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#a855f7','#ff9f43','#00bcd4'];
+  list.innerHTML = posts.slice(0,30).map(p => {
+    const c = p.color || COLORS[Math.floor(Math.random()*COLORS.length)];
+    const nick = p.nickname || '匿名';
+    return `<div class="pp-item" onclick="window.open('/post/${p.id}','_blank')" style="--pp-c:${c}">
+      <span class="pp-nick">${esc(nick)}</span>
+      <span class="pp-text">${esc(p.content)}</span>
+      <span class="pp-likes">❤️ ${p.likes||0}</span>
+    </div>`;
+  }).join('');
+}
+function renderTrendingList(list, posts, t) {
+  if (!posts || posts.length === 0) {
+    list.innerHTML = '<div style="padding:20px;text-align:center;color:rgba(255,255,255,0.2);font-size:13px">暂无趋势数据</div>';
+    return;
+  }
+  const medals = ['🥇','🥈','🥉','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣','🔟'];
+  list.innerHTML = posts.slice(0,20).map((p, i) => {
+    const c = p.color || '#4d96ff';
+    const score = ((p.likes||0) * 2 + (p.share_count||0) * 3);
+    return `<div class="pp-item" onclick="window.open('/post/${p.id}','_blank')" style="--pp-c:${c}">
+      <span style="font-size:16px;min-width:28px">${medals[i]||''}</span>
+      <span class="pp-nick">${esc(p.nickname||'匿名')}</span>
+      <span class="pp-text">${esc(p.content)}</span>
+      <span class="pp-likes">🔥 ${score}</span>
+    </div>`;
+  }).join('');
+}
+
+// 在loadPosts完成后也渲染面板
+const origLoadPosts = loadPosts;
+loadPosts = async function() {
+  await origLoadPosts();
+  const panel = document.getElementById('post-panel');
+  if (panel) { panel.style.display = ''; renderPanel(); }
+};
+
+// ===== 弹幕 - 随机大小 + 鲜艳颜色 =====
+// ===== 弹幕 - 纯CSS animation驱动 =====
+const COLOR_SET = [
+  '#ff1744','#ff9100','#ffea00','#00e676','#00b0ff','#2979ff','#d500f9','#ff4081',
+  '#ff6d00','#76ff03','#18ffff','#7c4dff','#e040fb','#ffab00','#00bfa5','#651fff'
+];
+
+function randomFontSize() {
+  const sizes = [18, 21, 24, 28, 32, 36, 40];
+  return sizes[Math.floor(Math.random() * sizes.length)];
+}
+
+function randomColor() {
+  return COLOR_SET[Math.floor(Math.random() * COLOR_SET.length)];
+}
+
+// 注入弹幕CSS动画
+(function() {
+  if (document.getElementById('danmaku-style')) return;
+  const s = document.createElement('style');
+  s.id = 'danmaku-style';
+  s.textContent = `
+    .danmaku-move{animation:danmakuFly linear infinite;will-change:transform;pointer-events:auto}
+    .danmaku-move:hover{animation-play-state:paused!important;transform:scale(1.03);z-index:10;box-shadow:0 0 30px rgba(255,255,255,0.15)}
+    .danmaku-move.danmaku-paused{animation-play-state:paused!important}
+    @keyframes danmakuFly{0%{transform:translateX(100vw)}100%{transform:translateX(-100%)}}
+  `;
+  document.head.appendChild(s);
+})();
+
+let danmakuEngine = null;
+
+function initDanmakuEngine() {
+  if (danmakuEngine) return;
+
+  const TRACK_GAP = 52;
+  const TRACKS = 10;
+  const tracks = [];
+  for (let i = 0; i < TRACKS; i++) tracks.push(i * TRACK_GAP + 3);
+  
+  function addItem(post) {
+    const fontSize = randomFontSize();
+    const color = post.color || randomColor();
+    const trackY = tracks[post.id % TRACKS];
+    const dur = 8 + Math.random() * 6;
+    
+    const el = document.createElement('div');
+    el.className = 'danmaku-msg danmaku-move';
+    el.style.cssText = `position:absolute;white-space:nowrap;border-radius:20px;cursor:pointer;display:flex;align-items:center;gap:6px;padding:3px 12px;font-size:${fontSize}px;background:${color}18;border:1px solid ${color}55;color:#fff;text-shadow:0 0 15px ${color}44,0 0 30px ${color}22;top:${trackY}px;animation-duration:${dur}s;animation-delay:${Math.random()*-dur}s;will-change:transform`;
+    
+    const profTag = post.profession ? `<span class="prof-tag" style="color:${color}">${esc(post.profession)}</span>` : '';
+    const targetStr = post.target ? ` → ${esc(post.target)}` : '';
+    const featEmoji = post.featured ? ' 🔥' : '';
+    el.innerHTML = `${profTag}<span class="nick" style="color:${color}">${esc(post.nickname)}${targetStr}${featEmoji}</span><span class="danmaku-text" data-full="${esc(post.content)}">${esc(post.content.length > 30 ? post.content.slice(0, 27) + '...' : post.content)}</span><span class="like-btn">❤️</span><span class="likes" id="likes-${post.id}">${post.likes}</span>`;
+    el.style.cursor = 'pointer';
+    // 注意：mouseenter/mouseleave用全局委托处理（见下方），不在每个元素上单独绑定
+    el.addEventListener('click', function(e) {
+      if (e.target.closest('.like-btn')) return;
+      unlockAndShowPost(post);
+    });
+    el.querySelector('.like-btn')?.addEventListener('click', function(e) {
+      e.stopPropagation();
+      likePost(post.id, this);
+    });
+    let pressTimer = null;
+    el.addEventListener('touchstart', function(e) { pressTimer = setTimeout(function() { showLongPressMenu(post, color); }, 500); }, {passive: true});
+    el.addEventListener('touchend', function() { clearTimeout(pressTimer); });
+    el.addEventListener('touchmove', function() { clearTimeout(pressTimer); }, {passive: true});
+    el.addEventListener('contextmenu', function(e) { e.preventDefault(); showLongPressMenu(post, color); });
+    
+    const trackEl = document.getElementById('danmaku-track');
+    if (trackEl) trackEl.appendChild(el);
+  }
+  
+  danmakuEngine = {
+    load(posts) {
+      const trackEl = document.getElementById('danmaku-track');
+      if (trackEl) trackEl.innerHTML = '';
+      if (!posts || posts.length === 0) return;
+      posts.slice(0, 40).forEach(p => addItem(p));
+    },
+    addOne(post) { addItem(post); }
+  };
+
+  // 事件委托：直接用document级别的mouseover事件
+  // 鼠标移到弹幕上 -> classList加danmaku-paused -> CSS暂停动画
+  // 鼠标移出 -> 重新检查所有弹幕，移除非悬停的danmaku-paused
+  document.addEventListener('mouseover', function(e) {
+    const msg = e.target.closest('.danmaku-msg');
+    if (msg) {
+      msg.classList.add('danmaku-paused');
+    }
+  });
+  // 定期清理：移除非悬停弹幕的暂停状态
+  setInterval(function() {
+    document.querySelectorAll('.danmaku-msg.danmaku-paused').forEach(function(el) {
+      if (!el.matches(':hover')) {
+        el.classList.remove('danmaku-paused');
+      }
+    });
+  }, 200);
+}
+
+async function loadPosts() {
+  const t = i18n[currentLang];
+  try {
+    const res = await fetch(`${API}/api/posts?limit=40`);
+    const data = await res.json();
+    allPosts = data.posts || [];
+    
+    if (!allPosts.length) {
+      document.getElementById('danmaku-track').innerHTML =
+        `<div style="text-align:center;color:rgba(255,255,255,0.2);padding:80px;font-size:1.2em">${t.empty_posts}</div>`;
+    } else {
+      danmakuEngine.load(allPosts);
+    }
+    updateStats();
+    showFreePostRemaining();
+    // 加载硬币余额
+    try {
+      const cr = await fetch(API + '/api/coins/balance', {method:'POST'});
+      const cd = await cr.json();
+      const badge = document.getElementById('coin-balance-badge');
+      if (badge) badge.textContent = (cd.balance || 0) > 999 ? '999+' : (cd.balance || 0);
+    } catch(e) {}
+  } catch(e) {
+    document.getElementById('stats').textContent = '💬 ' + t.stats_load_fail;
+  }
+}
+
+async function submitPost(){
+  const t=i18n[currentLang];
+  const content=document.getElementById('post-input').value.trim();
+  const nickname=document.getElementById('nick-input').value.trim()||t.post_anonymous;
+  const profession=document.getElementById('profession-select').value;
+  const target=document.getElementById('target-select').value;
+  if(!content){alert(t.post_empty_alert);return;}
+  if(content.length>500){alert(t.post_max_alert);return;}
+  try{
+    const headers = authHeaders();
+    const res=await fetch(`${API}/api/posts`,{method:'POST',headers,body:JSON.stringify({content,nickname,profession,target})});
+    const data=await res.json();
+    if(!res.ok){
+      if (data.need_login) {
+        if (confirm(data.error + '\n\n要去登录/注册吗？')) showAuthModal();
+      } else if (data.need_coin) {
+        // 提示余额不足，弹商店
+        if (confirm(data.error + '\n\n要去💎商店充值吗？')) showShopModal();
+      } else {
+        alert(data.error||t.post_fail_alert);
+      }
+      return;
+    }
+    document.getElementById('post-input').value='';
+    // 增量添加新弹幕到引擎，不重置全部
+    if (danmakuEngine && data) {
+      danmakuEngine.addOne(data);
+      allPosts.unshift(data);
+      updateStats();
+    }
+    // 更新余额badge
+    if (data.balance !== null && data.balance !== undefined) {
+      document.getElementById('coin-balance-badge').textContent = data.balance > 999 ? '999+' : data.balance;
+    }
+    // 更新今日剩余免费次数显示
+    showFreePostRemaining();
+  }catch(e){alert(t.post_fail_alert)}
+}
+
+// 显示今日免费发帖剩余次数
+async function showFreePostRemaining() {
+  try {
+    const r = await fetch(API + '/api/posts/free-remaining');
+    const d = await r.json();
+    const el = document.getElementById('free-count');
+    const container = document.getElementById('free-post-remaining');
+    if (el) el.textContent = d.remaining || 0;
+    if (container) {
+      if (d.remaining <= 0) {
+        container.innerHTML = '💰 今日免费已用完 · <a href="#" onclick="showShopModal();return false" style="color:#ffd700">去充值</a>';
+      } else {
+        container.innerHTML = `📝 今日免费剩余: <span style="color:#6bcb77;font-weight:700">${d.remaining}</span>/3`;
+      }
+    }
+  } catch(e) {}
+}
+
+// ===== 点击弹幕查看全文（截断+解锁） =====
+async function unlockAndShowPost(post) {
+  // 内容 <= 30字直接显示，不收费
+  if (!post.content || post.content.length <= 30) {
+    showPostDetail(post);
+    return;
+  }
+  // 长内容需要1金币
+  if (!confirm('💰 查看全文需要 1 金币。要继续吗？')) return;
+  try {
+    const r = await fetch(API + '/api/posts/' + post.id + '/unlock', {method:'POST'});
+    const d = await r.json();
+    if (!r.ok) {
+      if (confirm(d.error + '\n\n要去💎商店充值吗？')) showShopModal();
+      return;
+    }
+    // 更新余额
+    document.getElementById('coin-balance-badge').textContent = d.balance > 999 ? '999+' : d.balance;
+    showPostDetail(d);
+  } catch(e) { alert('网络错误'); }
+}
+
+function showPostDetail(post) {
+  const overlay = document.createElement('div');
+  overlay.className = 'share-overlay';
+  overlay.onclick = () => overlay.remove();
+  const color = post.color || '#4d96ff';
+  overlay.innerHTML = `<div class="share-box" onclick="event.stopPropagation()" style="max-width:500px;padding:24px">
+    <button class="share-close" onclick="this.closest('.share-overlay').remove()">✕</button>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+      <span style="font-weight:700;font-size:16px;color:${color}">${esc(post.nickname || '匿名')}</span>
+      ${post.profession ? `<span style="font-size:12px;opacity:0.5">${esc(post.profession)}</span>` : ''}
+      ${post.target ? `<span style="font-size:12px;opacity:0.5">→ ${esc(post.target)}</span>` : ''}
+    </div>
+    <div style="font-size:18px;line-height:1.6;padding:16px 0;border-top:1px solid rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.08)">
+      ${esc(post.content)}
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;color:rgba(255,255,255,0.3);font-size:13px">
+      <span>❤️ ${post.likes || 0}</span>
+      <span>${post.created_at ? post.created_at.slice(0,10) : ''}</span>
+    </div>
+    <div style="margin-top:16px;display:flex;gap:8px;justify-content:flex-end">
+      <button onclick="likePost(${post.id},this)" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#fff;padding:8px 16px;border-radius:8px;cursor:pointer">❤️ 点赞</button>
+      <a href="/post/${post.id}" target="_blank" style="background:${color};border:none;color:#fff;padding:8px 16px;border-radius:8px;text-decoration:none;font-weight:600">🔗 独立页面</a>
+    </div>
+    <!-- ===== Gumroad推广+打赏 ===== -->
+    <div style="margin-top:14px;padding:12px;background:linear-gradient(135deg,rgba(255,107,107,0.08),rgba(77,150,255,0.08));border-radius:12px;border:1px solid rgba(255,255,255,0.06)">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <span style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.6)">💎 赞助吐槽墙</span>
+        <a href="https://bobotempes.gumroad.com/l/chatgpt-prompts" target="_blank" style="font-size:12px;color:#ffd93d;text-decoration:none">🔥 AI提示词模板</a>
+        <a href="https://bobotempes.gumroad.com/l/cli-toolkit" target="_blank" style="font-size:12px;color:#6bcb77;text-decoration:none">🛠 CLI工具包</a>
+        <a href="https://bobotempes.gumroad.com/l/csv-toolkit" target="_blank" style="font-size:12px;color:#4d96ff;text-decoration:none">📊 CSV工具</a>
+        <a href="https://bobotempes.gumroad.com/l/excel-dashboard" target="_blank" style="font-size:12px;color:#ff6b6b;text-decoration:none">📈 Excel面板</a>
+      </div>
+      <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+        <span style="font-size:11px;color:rgba(255,255,255,0.3)">☕ 请开发者喝咖啡</span>
+        <button onclick="copyDonate()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);padding:4px 12px;border-radius:6px;cursor:pointer;font-size:11px">📋 复制收款地址</button>
+      </div>
+    </div>
+  </div>`;
+  document.body.appendChild(overlay);
+}
+
+async function likePost(id,btn){
+  try{
+    const res=await fetch(`${API}/api/posts/${id}/like`,{method:'POST'});
+    const data=await res.json();
+    const el=document.getElementById('likes-'+id);
+    if(el)el.textContent=data.likes;
+    btn.style.opacity='1';btn.style.transform='scale(1.3)';
+    setTimeout(()=>btn.style.transform='scale(1)',200);
+  }catch(e){}
+}
+
+document.getElementById('post-input').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();submitPost()}});
+function esc(t){const d=document.createElement('div');d.textContent=t;return d.innerHTML;}
+
+// ===== 广告轮播（VPS联盟 + Gumroad产品推荐） =====
+const ads_list = [
+  {title:'💻 VPS建站服务器', desc:'Vultr全球数据中心，月付$2.99起，稳定高效', link:'https://www.vultr.com/?ref=GxaNJMJNQ8C3', btn:'🚀 去看看'},
+  {title:'🚀 AI效率工具', desc:'ChatGPT提示词模板·1000+精选Prompts，工作效率翻倍', link:'https://bobotempes.gumroad.com/l/chatgpt-prompts', btn:'⚡ 获取'},
+  {title:'📦 CLI Toolkit Pro', desc:'开发者效率工具包，一键部署/监控/自动化', link:'https://bobotempes.gumroad.com/l/cli-toolkit', btn:'🛒 $9.99'},
+  {title:'📦 CSV Toolkit', desc:'CSV批量处理神器，合并/拆分/清洗一步到位', link:'https://bobotempes.gumroad.com/l/csv-toolkit', btn:'🛒 $12'},
+  {title:'📦 Excel Dashboard', desc:'专业Excel数据面板模板，可视化你的数据', link:'https://bobotempes.gumroad.com/l/excel-dashboard', btn:'🛒 $14.99'},
+  {title:'🧘 每日冥想引导', desc:'10分钟缓解工作压力，免费冥想音频合集', link:'https://gumroad.com/discover?query=meditation', btn:'🎧 开始'},
+  {title:'💰 跨境电商资源', desc:'独立站运营干货·从0到1的全套教程', link:'https://gumroad.com/discover?query=ecommerce', btn:'📚 查看'},
+  {title:'🤖 AI自动化工具', desc:'n8n工作流模板·Claude Code技能包，效率提升10倍', link:'https://bobotempes.gumroad.com/', btn:'⚡ 获取'},
+  {title:'💊 程序员的健康手册', desc:'久坐办公族的脊椎/眼睛/睡眠全方位保养指南', link:'https://gumroad.com/discover?query=health+guide', btn:'📋 了解'},
+  {title:'🎨 设计师资源库', desc:'UI套件+图标+模板，一键打包下载', link:'https://gumroad.com/discover?query=design+resources', btn:'🎨 查看'},
+  {title:'📈 副业赚钱指南', desc:'从0开始做副业的实操手册，月入$1000+', link:'https://gumroad.com/discover?query=side+hustle', btn:'💰 了解'},
+  {title:'🌐 域名投资秘籍', desc:'低买高卖，AI辅助找出有潜力域名', link:'https://gumroad.com/discover?query=domain+investing', btn:'🌐 查看'},
+];
+let adIndex = 0;
+
+function rotateAd() {
+  adIndex = (adIndex + 1) % ads_list.length;
+  const ad = ads_list[adIndex];
+  document.getElementById('ad-title').textContent = ad.title;
+  document.getElementById('ad-desc').textContent = ad.desc;
+  document.getElementById('ad-link').href = ad.link;
+  document.getElementById('ad-link').textContent = ad.btn;
+}
+
+// 每45秒轮播一次
+setInterval(rotateAd, 45000);
+
+function copyEmail() {
+  const email = 'lb1192176991@gmail.com';
+  navigator.clipboard.writeText(email).then(() => {
+    alert('📧 邮箱已复制：' + email);
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = email;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    alert('📧 邮箱已复制：' + email);
+  });
+}
+
+function copyDonate() {
+  const addr = '0x0bf82c4608a98f6f16507d89ddaacaa8879ad771';
+  navigator.clipboard.writeText(addr).then(() => {
+    alert('✅ OKX收款地址已复制：' + addr);
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = addr;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    alert('✅ OKX收款地址已复制：' + addr);
+  });
+}
+
+// ===== 分享弹窗 =====
+const SHARE_COLORS = ['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#a855f7','#ff9f43','#f44336','#00bcd4','#e91e63','#4caf50'];
+
+let shareOverlay = null;
+let shareBox = null;
+
+function initShareUI() {
+  // 先清理所有旧overlay（只删非auth的，不删登录弹窗）
+  document.querySelectorAll('.share-overlay:not(.auth-overlay)').forEach(el => el.remove());
+  // CSS
+  if (document.getElementById('share-style')) return;
+  const style = document.createElement('style');
+  style.id = 'share-style';
+  style.textContent = `
+    .share-overlay{position:fixed;top:0;left:0;width:100%;height:100%;z-index:999;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;animation:fadeIn 0.2s}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    @keyframes gradient{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
+    @keyframes glow{0%{box-shadow:0 0 5px rgba(77,150,255,0.2)}50%{box-shadow:0 0 20px rgba(77,150,255,0.4)}100%{box-shadow:0 0 5px rgba(77,150,255,0.2)}}
+    @keyframes float{0%{transform:translateY(0)}50%{transform:translateY(-4px)}100%{transform:translateY(0)}}
+    .shop-item{transition:all 0.2s;position:relative;overflow:hidden}
+    .shop-item:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,0,0,0.3)}
+    .shop-item:active{transform:scale(0.96)}
+    .recharge-option{transition:all 0.2s}
+    .recharge-option:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,0,0,0.3)}
+    .lp-item{transition:all 0.15s}
+    .lp-item:hover{background:rgba(255,255,255,0.08);transform:scale(1.02)}
+    .post-btn{background:linear-gradient(135deg,#ff6b6b,#ee5a24);border:none;color:#fff;padding:10px 28px;border-radius:10px;font-weight:700;font-size:16px;cursor:pointer;transition:all 0.2s}
+    .post-btn:hover{transform:scale(1.05);box-shadow:0 0 20px rgba(255,107,107,0.4)}
+    .post-btn:active{transform:scale(0.95)}
+    .lang-btn{transition:all 0.2s}
+    .lang-btn:hover{transform:scale(1.05);z-index:31}
+    .danmaku-msg{transition:transform 0.15s,opacity 0.3s}
+    .share-close{transition:all 0.2s}
+    .share-close:hover{transform:rotate(90deg);color:#ff6b6b}
+    ::-webkit-scrollbar{width:6px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:3px}
+    ::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.25)}
+    .share-box{background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:20px;padding:28px 32px;max-width:420px;width:90%;border:1px solid rgba(255,255,255,0.1);position:relative}
+    .share-box h3{font-size:1.1em;margin-bottom:12px;color:rgba(255,255,255,0.7)}
+    .share-quote{background:rgba(0,0,0,0.3);border-radius:12px;padding:16px;margin-bottom:16px;border-left:4px solid var(--sc)}
+    .share-quote .q-nick{font-weight:700;font-size:0.9em;margin-bottom:4px}
+    .share-quote .q-text{color:rgba(255,255,255,0.7);font-size:0.95em;line-height:1.5}
+    .share-btns{display:flex;gap:10px;flex-wrap:wrap}
+    .share-btn{flex:1;min-width:80px;text-align:center;padding:10px 0;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:#fff;text-decoration:none;font-size:13px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:5px}
+    .share-btn:hover{background:rgba(255,255,255,0.1);transform:scale(1.03)}
+    .share-btn.twitter:hover{border-color:#1da1f2}
+    .share-btn.copy:hover{border-color:#6bcb77}
+    .share-close{position:absolute;top:12px;right:16px;background:none;border:none;color:rgba(255,255,255,0.3);font-size:20px;cursor:pointer}
+    .share-close:hover{color:#fff}
+    .longpress-overlay{position:fixed;top:0;left:0;width:100%;height:100%;z-index:999;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center;animation:fadeIn 0.15s}
+    .longpress-menu{background:#1a1a2e;border-radius:20px 20px 0 0;padding:12px 0;max-width:420px;width:100%;border-top:1px solid rgba(255,255,255,0.08)}
+    .longpress-menu .lp-item{display:flex;align-items:center;gap:12px;padding:14px 24px;font-size:16px;cursor:pointer;transition:background 0.15s;color:rgba(255,255,255,0.85)}
+    .longpress-menu .lp-item:hover{background:rgba(255,255,255,0.06)}
+    .longpress-menu .lp-item:active{background:rgba(255,255,255,0.1)}
+    .longpress-menu .lp-divider{height:1px;background:rgba(255,255,255,0.06);margin:4px 16px}
+    .longpress-menu .lp-close{text-align:center;color:rgba(255,255,255,0.35);padding:14px;font-size:15px;cursor:pointer;border-top:1px solid rgba(255,255,255,0.06);margin-top:4px}
+  `;
+  document.head.appendChild(style);
+}
+
+function showShareModal(post, color) {
+  initShareUI();
+  
+  const t = i18n[currentLang];
+  const text = post.content;
+  const nick = post.nickname || t.post_anonymous;
+  const prof = post.profession ? `[${post.profession}] ` : '';
+  const target = post.target ? ` → ${post.target}` : '';
+  const baseUrl = window.location.origin + '/post/' + post.id;
+  const siteName = currentLang === 'zh' ? '吐槽墙' : currentLang === 'en' ? 'Vent Wall' : currentLang === 'ja' ? '愚痴の壁' : currentLang === 'ko' ? '불평벽' : 'Vent Wall';
+  
+  const shareText = `${prof}${nick}: "${text}"${target} - ${siteName}`;
+  const encodedText = encodeURIComponent(shareText);
+  
+  // 分享按钮配置（带追踪参数）
+  const sharePlatforms = [
+    {name:'𝕏 Twitter', url:(u)=>`https://twitter.com/intent/tweet?text=${encodedText}&url=${encodeURIComponent(u+'?ref=twitter')}`, cls:'twitter'},
+    {name:'🔴 Reddit', url:(u)=>`https://www.reddit.com/submit?title=${encodedText}&url=${encodeURIComponent(u+'?ref=reddit')}`},
+    {name:'📘 Facebook', url:(u)=>`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(u+'?ref=facebook')}&quote=${encodedText}`},
+    {name:'💬 WhatsApp', url:(u)=>`https://web.whatsapp.com/send?text=${encodedText}%20${encodeURIComponent(u+'?ref=whatsapp')}`},
+    {name:'✈️ Telegram', url:(u)=>`https://t.me/share/url?url=${encodeURIComponent(u+'?ref=telegram')}&text=${encodedText}`},
+    {name:'💼 LinkedIn', url:(u)=>`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(u+'?ref=linkedin')}`},
+    {name:'🧵 Threads', url:(u)=>`https://www.threads.net/intent/post?text=${encodedText}%20${encodeURIComponent(u+'?ref=threads')}`},
+    {name:'📝 Tumblr', url:(u)=>`https://www.tumblr.com/widgets/share/tool?canonicalUrl=${encodeURIComponent(u+'?ref=tumblr')}&title=${encodedText}`},
+    {name:'📌 Pinterest', url:(u)=>`https://pinterest.com/pin/create/button/?url=${encodeURIComponent(u+'?ref=pinterest')}&description=${encodedText}`},
+    {name:'🇷🇺 VK', url:(u)=>`https://vk.com/share.php?url=${encodeURIComponent(u+'?ref=vk')}&title=${encodedText}`},
+    {name:'🇨🇳 微博', url:(u)=>`https://www.weibo.com/repost?url=${encodeURIComponent(u+'?ref=weibo')}&title=${encodedText}`},
+    {name:'📋 复制', url:()=>null, cls:'copy', onclick:`copyShareText('${esc(shareText)}')`},
+    {name:'📷 保存图片', url:()=>null, cls:'', onclick:`shareToImage(${post.id})`},
+  ];
+  
+  // 移除旧弹窗
+  const old = document.querySelector('.share-overlay:not(.auth-overlay)');
+  if (old) old.remove();
+  
+  const c = color || SHARE_COLORS[Math.floor(Math.random() * SHARE_COLORS.length)];
+  
+  const overlay = document.createElement('div');
+  overlay.className = 'share-overlay';
+  overlay.style.setProperty('--sc', c);
+  overlay.innerHTML = `
+    <div class="share-box" onclick="event.stopPropagation()">
+      <button class="share-close" onclick="closeShare()">✕</button>
+      <h3>📤 ${t.share_title || '分享吐槽'}</h3>
+      <div class="share-quote">
+        <div class="q-nick" style="color:${c}">${prof}${esc(nick)}${target}</div>
+        <div class="q-text">${esc(text)}</div>
+      </div>
+      <div class="share-btns" id="share-btns-list"></div>
+    </div>
+  `;
+  overlay.addEventListener('click', closeShare);
+  document.body.appendChild(overlay);
+  shareOverlay = overlay;
+  
+  // 动态生成分享按钮并绑定点击追踪
+  const btnList = document.getElementById('share-btns-list');
+  if (btnList) {
+    sharePlatforms.forEach(function(sp) {
+      const btn = document.createElement('a');
+      btn.className = 'share-btn' + (sp.cls ? ' ' + sp.cls : '');
+      if (sp.onclick) {
+        btn.href = 'javascript:void(0)';
+        btn.setAttribute('onclick', sp.onclick);
+      } else {
+        btn.href = sp.url(baseUrl);
+        btn.target = '_blank';
+        btn.rel = 'noopener';
+        // 点击时记录分享+奖励金币
+        btn.addEventListener('click', function() {
+          try { localStorage.setItem('shared_post_' + post.id, Date.now()); } catch(e){}
+          // 调分享奖励API
+          fetch(API + '/api/posts/' + post.id + '/share', {method:'POST'}).then(r => r.json()).then(d => {
+            if (d.coins_earned > 0) {
+              const badge = document.getElementById('coin-balance-badge');
+              if (badge) badge.textContent = (d.balance || 0) > 999 ? '999+' : (d.balance || 0);
+              showToast('🎉 分享成功 +' + d.coins_earned + ' 金币！');
+            }
+          }).catch(()=>{});
+        });
+      }
+      btn.textContent = sp.name;
+      btnList.appendChild(btn);
+    });
+  }
+}
+
+function resetDanmakuHover() {
+  const msgs = document.querySelectorAll('.danmaku-msg.danmaku-move');
+  for (let i = 0; i < msgs.length; i++) {
+    msgs[i]._hovered = false;
+    msgs[i].classList.remove('danmaku-paused');
+  }
+}
+
+function closeShare() {
+  const el = document.querySelector('.share-overlay:not(.auth-overlay)');
+  if (el) el.remove();
+  resetDanmakuHover();
+}
+
+// ===== Toast提示 =====
+function showToast(msg) {
+  const el = document.createElement('div');
+  el.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.85);color:#fff;padding:10px 24px;border-radius:12px;font-size:14px;z-index:9999;animation:fadeIn 0.2s;border:1px solid rgba(255,255,255,0.1);backdrop-filter:blur(10px);pointer-events:none';
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity 0.5s'; setTimeout(() => el.remove(), 500); }, 2500);
+}
+
+function copyShareText(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    alert('✅ ' + (i18n[currentLang].copied || '已复制！'));
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+    alert('✅ ' + (i18n[currentLang].copied || '已复制！'));
+  });
+}
+
+// ===== 排行榜 =====
+function showRanking() {
+  initShareUI();
+  const t = i18n[currentLang];
+  
+  // 从 allPosts 按点赞排序
+  const sorted = [...allPosts].sort((a, b) => (b.likes || 0) - (a.likes || 0));
+  const top = sorted.slice(0, 10);
+  
+  let listHtml = '';
+  if (top.length === 0) {
+    listHtml = `<div style="text-align:center;padding:20px;color:rgba(255,255,255,0.3)">${t.rank_empty}</div>`;
+  } else {
+    const medals = ['🥇','🥈','🥉','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣','🔟'];
+    top.forEach((p, i) => {
+      const prof = p.profession ? `[${p.profession}]` : '';
+      const target = p.target ? ` → ${p.target}` : '';
+      listHtml += `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05)">
+        <span style="font-size:18px">${medals[i]||''}</span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600;color:${p.color||'#4d96ff'}">${prof}${esc(p.nickname)}${target}</div>
+          <div style="font-size:14px;color:rgba(255,255,255,0.6);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.content)}</div>
+        </div>
+        <span style="font-size:12px;color:rgba(255,255,255,0.3);white-space:nowrap">❤️ ${p.likes||0}</span>
+      </div>`;
+    });
+  }
+  
+  const overlay = document.createElement('div');
+  overlay.className = 'share-overlay';
+  overlay.innerHTML = `<div class="share-box" onclick="event.stopPropagation()" style="max-width:500px">
+    <button class="share-close" onclick="closeShare()">✕</button>
+    <h3>${t.rank_title}</h3>
+    <div style="max-height:400px;overflow-y:auto">${listHtml}</div>
+  </div>`;
+  overlay.addEventListener('click', closeShare);
+  document.body.appendChild(overlay);
+}
+
+// ===== 分享解锁 =====
+function showShareUnlock() {
+  initShareUI();
+  const t = i18n[currentLang];
+  const url = encodeURIComponent(window.location.href);
+  const text = encodeURIComponent(t.unlock_content.replace(/\\\\\\\\n/g, '\\n'));
+  
+  const overlay = document.createElement('div');
+  overlay.className = 'share-overlay';
+  overlay.innerHTML = `<div class="share-box" onclick="event.stopPropagation()" style="max-width:450px">
+    <button class="share-close" onclick="closeShare()">✕</button>
+    <h3>${t.unlock_title}</h3>
+    <div style="text-align:center;padding:10px 0">
+      <p style="color:rgba(255,255,255,0.4);font-size:14px;margin-bottom:16px" id="unlock-status">分享到社交平台，满3次解锁今日劲爆吐槽</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+        <a class="share-btn twitter" href="https://twitter.com/intent/tweet?text=${text}&url=${url}" target="_blank" rel="noopener" onclick="recordShare('twitter')">𝕏 ${t.unlock_btn_share}</a>
+        <a class="share-btn" href="https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${text}" target="_blank" rel="noopener" onclick="recordShare('facebook')">📘 Facebook</a>
+        <a class="share-btn" href="https://web.whatsapp.com/send?text=${text}%20${url}" target="_blank" rel="noopener" onclick="recordShare('whatsapp')">💬 WhatsApp</a>
+        <a class="share-btn" href="https://t.me/share/url?url=${url}&text=${text}" target="_blank" rel="noopener" onclick="recordShare('telegram')">✈️ Telegram</a>
+        <a class="share-btn" href="https://www.linkedin.com/sharing/share-offsite/?url=${url}" target="_blank" rel="noopener" onclick="recordShare('linkedin')">💼 LinkedIn</a>
+      </div>
+    </div>
+  </div>`;
+  overlay.addEventListener('click', closeShare);
+  document.body.appendChild(overlay);
+  updateUnlockStatus();
+}
+
+async function recordShare(platform) {
+  try {
+    await fetch(API + '/api/share/unlock', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({platform})});
+    setTimeout(updateUnlockStatus, 500);
+  } catch(e) {}
+}
+
+async function updateUnlockStatus() {
+  try {
+    const r = await fetch(API + '/api/share/unlock', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({platform:'check'})});
+    const d = await r.json();
+    const el = document.getElementById('unlock-status');
+    if (el) {
+      if (d.unlocked) {
+        el.innerHTML = '🎉 已解锁！<br><br><strong>' + (i18n[currentLang]?.unlock_content || tucao_unlock_fallback) + '</strong>';
+      } else {
+        el.textContent = '已分享 ' + d.shared_today + '/' + d.required + ' 次 → 继续分享解锁劲爆吐槽';
+      }
+    }
+  } catch(e) {}
+}
+
+// ===== 💎 商店弹窗 =====
+async function showShopModal() {
+  // 获取余额
+  let balance = 0, isVip = false;
+  try {
+    const r = await fetch(API + '/api/coins/balance', {method:'POST'});
+    const d = await r.json();
+    balance = d.balance || 0;
+    isVip = d.is_vip || false;
+    document.getElementById('coin-balance-badge').textContent = balance > 999 ? '999+' : balance;
+  } catch(e) {}
+  
+  const t = i18n[currentLang] || {};
+  const overlay = document.createElement('div');
+  overlay.className = 'share-overlay';
+  overlay.onclick = () => overlay.remove();
+  overlay.innerHTML = `<div class="share-box" onclick="event.stopPropagation()" style="max-width:480px;padding:24px">
+    <button class="share-close" onclick="this.closest('.share-overlay').remove()">✕</button>
+    <h3 style="font-size:1.4em;margin-bottom:5px">💎 商店</h3>
+    <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(255,215,0,0.1);border-radius:12px;padding:12px 16px;margin:12px 0">
+      <span style="font-size:16px">💰 <span style="font-weight:700;font-size:20px" id="shop-balance">${balance}</span> 硬币</span>
+      <button onclick="showRechargeModal()" style="background:linear-gradient(135deg,#ffd700,#ff8c00);border:none;color:#000;font-weight:700;padding:8px 20px;border-radius:8px;cursor:pointer;font-size:14px">⬆ 充值</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+      <div class="shop-item" onclick="buyFeature('feature')" style="background:rgba(255,107,107,0.1);border:1px solid rgba(255,107,107,0.25);border-radius:12px;padding:14px;cursor:pointer;text-align:center">
+        <span style="font-size:28px">🔥</span>
+        <div style="font-weight:700;font-size:14px;margin-top:6px">置顶 1天</div>
+        <div style="color:#ff6b6b;font-weight:700;font-size:13px">49金币</div>
+      </div>
+      <div class="shop-item" onclick="buyFeature('color')" style="background:rgba(77,150,255,0.1);border:1px solid rgba(77,150,255,0.25);border-radius:12px;padding:14px;cursor:pointer;text-align:center">
+        <span style="font-size:28px">🎨</span>
+        <div style="font-weight:700;font-size:14px;margin-top:6px">彩色弹幕</div>
+        <div style="color:#4d96ff;font-weight:700;font-size:13px">25金币</div>
+      </div>
+      <div class="shop-item" onclick="buyFeature('boost')" style="background:rgba(107,203,119,0.1);border:1px solid rgba(107,203,119,0.25);border-radius:12px;padding:14px;cursor:pointer;text-align:center">
+        <span style="font-size:28px">⚡</span>
+        <div style="font-weight:700;font-size:14px;margin-top:6px">置顶30min</div>
+        <div style="color:#6bcb77;font-weight:700;font-size:13px">25金币</div>
+      </div>
+      <div class="shop-item" onclick="buyFeature('who_liked')" style="background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.25);border-radius:12px;padding:14px;cursor:pointer;text-align:center">
+        <span style="font-size:28px">👁️</span>
+        <div style="font-weight:700;font-size:14px;margin-top:6px">查看点赞者</div>
+        <div style="color:#a855f7;font-weight:700;font-size:13px">49金币</div>
+      </div>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:8px">
+      <button onclick="showCheckinModal();overlay.remove()" style="flex:1;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#fff;padding:10px;border-radius:8px;cursor:pointer;font-size:13px">📅 签到领金币</button>
+      <button onclick="showReferralModal();overlay.remove()" style="flex:1;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#fff;padding:10px;border-radius:8px;cursor:pointer;font-size:13px">🌟 邀请好友</button>
+    </div>
+    ${isVip ? '<div style="margin-top:10px;text-align:center;color:#ffd700;font-size:13px">👑 VIP · 签到享双倍金币加成</div>' : ''}
+  </div>`;
+  document.body.appendChild(overlay);
+}
+
+function showRechargeModal() {
+  const t = i18n[currentLang] || {};
+  const overlay = document.createElement('div');
+  overlay.className = 'share-overlay';
+  overlay.onclick = () => overlay.remove();
+  overlay.innerHTML = `<div class="share-box" onclick="event.stopPropagation()" style="max-width:380px;padding:24px;text-align:center">
+    <button class="share-close" onclick="this.closest('.share-overlay').remove()">✕</button>
+    <h3>⬆ 充值硬币</h3>
+    <p style="color:rgba(255,255,255,0.4);font-size:13px;margin:8px 0 16px">一次充值，站内随意消费</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px">
+      <div class="recharge-option" onclick="recharge(49,49)" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:14px;cursor:pointer">
+        <div style="font-size:20px;font-weight:700;color:#ffd93d">49</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.4)">硬币</div>
+        <div style="font-size:13px;font-weight:700;color:#6bcb77">\$0.49</div>
+      </div>
+      <div class="recharge-option" onclick="recharge(100,100)" style="background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.3);border-radius:10px;padding:14px;cursor:pointer">
+        <div style="font-size:20px;font-weight:700;color:#ffd700">100</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.4)">硬币</div>
+        <div style="font-size:13px;font-weight:700;color:#6bcb77">\$1.00</div>
+      </div>
+      <div class="recharge-option" onclick="recharge(299,299)" style="background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.3);border-radius:10px;padding:14px;cursor:pointer">
+        <div style="font-size:20px;font-weight:700;color:#a855f7">299</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.4)">硬币</div>
+        <div style="font-size:13px;font-weight:700;color:#6bcb77">\$2.99</div>
+      </div>
+    </div>
+    <p style="font-size:12px;color:rgba(255,255,255,0.3)">通过 Gumroad 安全支付 · 支持 PayPal/信用卡</p>
+  </div>`;
+  document.body.appendChild(overlay);
+}
+
+async function recharge(coins, price) {
+  try {
+    const r = await fetch(API + '/api/coins/recharge', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({amount: price, coins: coins})
+    });
+    const d = await r.json();
+    if (d.payment_url) {
+      window.open(d.payment_url, '_blank', 'width=500,height=700');
+      // 关闭当前弹窗
+      document.querySelector('.share-overlay')?.remove();
+      // 显示等待确认
+      const overlay = document.createElement('div');
+      overlay.className = 'share-overlay';
+      overlay.onclick = () => overlay.remove();
+      overlay.innerHTML = `<div class="share-box" onclick="event.stopPropagation()" style="max-width:380px;padding:24px;text-align:center">
+        <p style="font-size:40px;margin-bottom:12px">⏳</p>
+        <h3>等待支付确认...</h3>
+        <p style="color:rgba(255,255,255,0.5);font-size:13px;margin:10px 0">完成支付后，点击下方按钮确认到账</p>
+        <button onclick="verifyRecharge(${coins})" style="background:linear-gradient(135deg,#ffd700,#ff8c00);border:none;color:#000;font-weight:700;padding:12px 30px;border-radius:8px;cursor:pointer;font-size:15px">✅ 我已支付</button>
+      </div>`;
+      document.body.appendChild(overlay);
+    }
+  } catch(e) { alert('充值失败，请重试'); }
+}
+
+async function verifyRecharge(coins) {
+  try {
+    const r = await fetch(API + '/api/coins/verify-recharge', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({coins: coins})
+    });
+    const d = await r.json();
+    if (d.ok) {
+      document.querySelectorAll('.share-overlay').forEach(el => el.remove());
+      document.getElementById('coin-balance-badge').textContent = d.balance > 999 ? '999+' : d.balance;
+      alert('✅ 充值成功！余额: ' + d.balance + ' 金币');
+      showShopModal();
+    }
+  } catch(e) { alert('验证失败，请联系站长'); }
+}
+
+let _lastBuyPostId = null;
+async function buyFeature(feature) {
+  // 如果有打开的帖子就用当前帖子，否则提示
+  const old = document.querySelector('.longpress-overlay');
+  let postId = _lastBuyPostId;
+  if (old) {
+    const pid = old.querySelector('[data-post-id]');
+    if (pid) postId = pid.dataset.postId;
+  }
+  if (!postId) {
+    const pid = prompt('输入帖子ID:');
+    if (!pid) return;
+    postId = parseInt(pid);
+    if (!postId) return;
+  }
+  
+  try {
+    const prices = {feature:49, color:25, boost:25, who_liked:49};
+    const names = {feature:'🔥 置顶1天', color:'🎨 彩色弹幕', boost:'⚡ 置顶30min', who_liked:'👁️ 查看点赞者'};
+    if (!confirm(`花费 ${prices[feature]} 金币解锁「${names[feature]}」？`)) return;
+    
+    const r = await fetch(API + '/api/coins/spend', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({post_id: postId, feature: feature, coins: prices[feature]})
+    });
+    const d = await r.json();
+    if (d.ok) {
+      document.getElementById('coin-balance-badge').textContent = d.balance > 999 ? '999+' : d.balance;
+      alert('✅ ' + names[feature] + ' 已激活！余额: ' + d.balance + ' 金币');
+      document.querySelectorAll('.share-overlay').forEach(el => el.remove());
+    } else {
+      alert(d.error || '操作失败');
+    }
+  } catch(e) { alert('网络错误'); }
+}
+
+// ===== 长按操作菜单 =====
+function showLongPressMenu(post, color) {
+  const old = document.querySelector('.longpress-overlay');
+  if (old) old.remove();
+  const t = i18n[currentLang];
+  const nick = post.nickname || t.post_anonymous;
+  const text = post.content.length > 60 ? post.content.slice(0, 60) + '...' : post.content;
+  const overlay = document.createElement('div');
+  overlay.className = 'longpress-overlay';
+  overlay.innerHTML = `<div class="longpress-menu" onclick="event.stopPropagation()">
+    <div style="text-align:center;padding:6px 24px 12px"><span style="font-size:14px;color:${color}">${esc(nick)}</span><span style="color:rgba(255,255,255,0.4);font-size:13px;display:block;margin-top:2px">${esc(text)}</span></div>
+    <div class="lp-item" onclick="boostPost(${post.id})"><span style="font-size:20px">⏫</span> 置顶30分钟 · $0.49</div>
+    <div class="lp-item" onclick="showColorPicker(${post.id})"><span style="font-size:20px">🎨</span> 彩色弹幕 · $0.49</div>
+    <div class="lp-item" onclick="showReplyModal(${post.id}, '${color}')"><span style="font-size:20px">💬</span> 回复</div>
+    <div class="lp-item" onclick="showWhoLiked(${post.id})"><span style="font-size:20px">👁️</span> Who Liked</div>
+    <div class="lp-item" onclick="shareToTwitter(${post.id})"><span style="font-size:20px">🐦</span> Twitter分享</div>
+    <div class="lp-item" onclick="showShareModal(getPostById(${post.id}), '${color}')"><span style="font-size:20px">📤</span> ${t.share_title || '分享吐槽'}</div>
+    <div class="lp-item" onclick="likePostFromMenu(${post.id})"><span style="font-size:20px">❤️</span> ${t.rank_likes || '点赞'}</div>
+    <div class="lp-item" onclick="featurePost(${post.id})"><span style="font-size:20px">📌</span> 付费置顶 · $0.99</div>
+    <div class="lp-item" onclick="window.open('/post/${post.id}', '_blank')"><span style="font-size:20px">🔗</span> 打开独立页面</div>
+    <div class="lp-close" onclick="closeLongPress()">取消</div>
+  </div>`;
+  overlay.addEventListener('click', closeLongPress);
+  document.body.appendChild(overlay);
+}
+function closeLongPress() {
+  const el = document.querySelector('.longpress-overlay');
+  if (el) el.remove();
+}
+function getPostById(id) {
+  return allPosts.find(p => p.id === id) || {id, content:'', nickname:''};
+}
+function likePostFromMenu(id) {
+  closeLongPress();
+  likePost(id, {style:{}});
+}
+
+// ===== Twitter一键分享帖子 =====
+async function shareToTwitter(postId) {
+  closeLongPress();
+  try {
+    const r = await fetch(API + '/api/share/twitter/' + postId);
+    const d = await r.json();
+    if (d.twitter_url) {
+      window.open(d.twitter_url, '_blank', 'width=600,height=500');
+      // 记录分享+奖励金币
+      fetch(API + '/api/posts/' + postId + '/share', {method:'POST'}).then(r2 => r2.json()).then(d2 => {
+        if (d2.coins_earned > 0) {
+          document.getElementById('coin-balance-badge').textContent = (d2.balance || 0) > 999 ? '999+' : (d2.balance || 0);
+          showToast('🐦 Twitter分享成功 +' + d2.coins_earned + ' 金币！');
+        }
+      }).catch(()=>{});
+    }
+  } catch(e) { alert('分享失败'); }
+}
+
+// ===== Feature 2: Reply Modal (弹幕回复) =====
+function showReplyModal(postId, color) {
+  closeLongPress();
+  initShareUI();
+  const overlay = document.createElement('div');
+  overlay.className = 'share-overlay';
+  overlay.innerHTML = `<div class="share-box" onclick="event.stopPropagation()" style="max-width:500px">
+    <button class="share-close" onclick="closeShare()">✕</button>
+    <h3>💬 回复</h3>
+    <div id="reply-list-${postId}" style="max-height:200px;overflow-y:auto;margin-bottom:12px;font-size:13px;color:rgba(255,255,255,0.5)">加载回复中...</div>
+    <div style="display:flex;gap:8px">
+      <input id="reply-nick-${postId}" class="input-nick" maxlength="50" placeholder="昵称" style="flex:0 0 100px;height:42px;font-size:14px">
+      <input id="reply-input-${postId}" style="flex:1;height:42px;border-radius:10px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.08);color:#fff;padding:0 14px;outline:none;font-size:14px" maxlength="200" placeholder="写回复...">
+      <button style="height:42px;padding:0 20px;border-radius:10px;border:none;background:${color||'#4d96ff'};color:#fff;font-weight:600;cursor:pointer" onclick="submitReply(${postId})">发送</button>
+    </div>
+  </div>`;
+  overlay.addEventListener('click', closeShare);
+  document.body.appendChild(overlay);
+  loadReplies(postId);
+}
+async function loadReplies(postId) {
+  try {
+    const res = await fetch(API + '/api/posts/' + postId + '/replies');
+    const replies = await res.json();
+    const list = document.getElementById('reply-list-' + postId);
+    if (!list) return;
+    if (!replies || replies.length === 0) {
+      list.innerHTML = '<div style="text-align:center;padding:10px;color:rgba(255,255,255,0.3)">暂无回复，来抢沙发！</div>';
+      return;
+    }
+    list.innerHTML = replies.map(r =>
+      `<div style="padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04)">
+        <span style="font-weight:600;color:#4d96ff;font-size:12px">${esc(r.nickname||'匿名')}</span>
+        <span style="color:rgba(255,255,255,0.6);font-size:13px">${esc(r.content)}</span>
+      </div>`
+    ).join('');
+  } catch(e) {
+    const list = document.getElementById('reply-list-' + postId);
+    if (list) list.innerHTML = '<div style="text-align:center;padding:10px;color:rgba(255,255,255,0.3)">加载失败</div>';
+  }
+}
+async function submitReply(postId) {
+  const input = document.getElementById('reply-input-' + postId);
+  const nickInput = document.getElementById('reply-nick-' + postId);
+  const content = (input && input.value.trim()) || '';
+  const nickname = (nickInput && nickInput.value.trim()) || '匿名';
+  if (!content) { alert('写点内容再发送'); return; }
+  try {
+    const res = await fetch(API + '/api/posts/' + postId + '/replies', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({content, nickname})
+    });
+    const data = await res.json();
+    if (!res.ok) { alert(data.error || '发送失败'); return; }
+    if (input) input.value = '';
+    loadReplies(postId);
+  } catch(e) { alert('发送失败'); }
+}
+
+// ===== Feature 3: Check-in (签到) =====
+async function showCheckinModal() {
+  initShareUI();
+  try {
+    const res = await fetch(API + '/api/checkin/status');
+    const status = await res.json();
+    const checked = status.today_checked;
+    const streak = status.streak || 0;
+    const overlay = document.createElement('div');
+    overlay.className = 'share-overlay';
+    const nextMilestone = streak < 3 ? 3 : streak < 7 ? 7 : 30;
+    const progress = Math.min(streak / nextMilestone * 100, 100);
+    overlay.innerHTML = `<div class="share-box" onclick="event.stopPropagation()" style="max-width:380px;text-align:center">
+      <button class="share-close" onclick="closeShare()">✕</button>
+      <h3>📅 每日签到</h3>
+      <div style="font-size:48px;margin:10px 0">${checked ? '✅' : '📌'}</div>
+      <div style="font-size:24px;font-weight:700;color:#ffd93d">🔥 ${streak} 天</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.4);margin:6px 0 14px">连续签到</div>
+      <div style="background:rgba(255,255,255,0.1);border-radius:10px;height:8px;overflow:hidden;margin:0 20px 14px">
+        <div style="height:100%;width:${progress}%;background:linear-gradient(90deg,#ffd93d,#ff6b6b);border-radius:10px;transition:width 0.3s"></div>
+      </div>
+      <div style="display:flex;gap:6px;justify-content:center;font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:14px">
+        <span style="${streak>=3?'color:#ffd93d;font-weight:700':''}">🏅 3天</span>
+        <span>→</span>
+        <span style="${streak>=7?'color:#ffd93d;font-weight:700':''}">⚡ 7天</span>
+        <span>→</span>
+        <span style="${streak>=30?'color:#ffd93d;font-weight:700':''}">🌟 30天</span>
+      </div>
+      ${checked ? '<div style="padding:12px;border-radius:10px;background:rgba(107,203,119,0.1);color:#6bcb77;font-size:14px">今天已签到 ✅</div>' :
+        `<button style="padding:14px 40px;border-radius:14px;border:none;background:linear-gradient(135deg,#ff6b6b,#ffd93d);color:#fff;font-weight:700;font-size:17px;cursor:pointer;box-shadow:0 4px 25px rgba(255,107,107,0.3)" onclick="doCheckin()">签到打卡</button>`}
+    </div>`;
+    overlay.addEventListener('click', closeShare);
+    document.body.appendChild(overlay);
+  } catch(e) { alert('获取签到状态失败'); }
+}
+async function doCheckin() {
+  try {
+    const res = await fetch(API + '/api/checkin', {method:'POST'});
+    const data = await res.json();
+    if (data.ok) {
+      const rewardNames = {gold_nickname:'🏅 金色昵称', free_boost:'⚡ 免费置顶', special_badge:'🌟 特殊徽章'};
+      const rewards = (data.rewards||[]).map(r => rewardNames[r]||r).join(', ');
+      alert('✅ 签到成功！连续 ' + data.streak + ' 天' + (rewards ? '\n🎁 获得奖励：' + rewards : ''));
+      closeShare();
+    } else {
+      alert(data.error || '签到失败');
+    }
+  } catch(e) { alert('签到失败'); }
+}
+
+// ===== Feature 4: Save as Image (Share Card) =====
+async function saveAsImage(postId) {
+  try {
+    const res = await fetch(API + '/api/card/' + postId);
+    if (!res.ok) { alert('生成图片失败'); return; }
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'tucao-card-' + postId + '.png';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  } catch(e) { alert('保存失败'); }
+}
+function shareToImage(postId) {
+  closeShare();
+  saveAsImage(postId);
+}
+
+// ===== Feature 6: Who Liked (付费查看点赞者) =====
+async function showWhoLiked(postId) {
+  closeLongPress();
+  initShareUI();
+  const overlay = document.createElement('div');
+  overlay.className = 'share-overlay';
+  overlay.innerHTML = `<div class="share-box" onclick="event.stopPropagation()" style="max-width:420px">
+    <button class="share-close" onclick="closeShare()">✕</button>
+    <h3>👁️ Who Liked</h3>
+    <div id="who-liked-content" style="text-align:center;padding:20px 0;color:rgba(255,255,255,0.4)">查询中...</div>
+  </div>`;
+  overlay.addEventListener('click', closeShare);
+  document.body.appendChild(overlay);
+  try {
+    const res = await fetch(API + '/api/posts/' + postId + '/who-liked', {method:'POST'});
+    const data = await res.json();
+    const content = document.getElementById('who-liked-content');
+    if (!content) return;
+    if (!data.purchased) {
+      content.innerHTML = `<div style="color:rgba(255,255,255,0.6);margin-bottom:16px">付费 $0.99 查看谁赞了你的帖子</div>
+        <a href="${data.payment_url}" target="_blank" rel="noopener" style="display:inline-block;padding:12px 32px;border-radius:12px;background:linear-gradient(135deg,#4d96ff,#6bcb77);color:#fff;font-weight:700;text-decoration:none">💳 立即购买</a>
+        <div style="margin-top:10px;font-size:12px;color:rgba(255,255,255,0.3)">购买后输入 Sale ID</div>
+        <div style="display:flex;gap:8px;margin-top:8px;justify-content:center">
+          <input id="sale-id-input" style="width:200px;height:36px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.08);color:#fff;padding:0 10px;outline:none;font-size:13px" placeholder="输入Gumroad Sale ID">
+          <button style="height:36px;padding:0 16px;border-radius:8px;border:none;background:#4d96ff;color:#fff;cursor:pointer;font-weight:600" onclick="verifyWhoLiked(${postId})">验证</button>
+        </div>`;
+    } else {
+      const likers = data.likers || [];
+      if (likers.length === 0) {
+        content.innerHTML = '<div style="padding:20px;color:rgba(255,255,255,0.3)">还没有人赞过这条帖子</div>';
+      } else {
+        content.innerHTML = '<div style="max-height:300px;overflow-y:auto">' + likers.map(l =>
+          `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05)">
+            <span style="font-size:14px;color:#4d96ff">👤 ${esc(l.id)}</span>
+            <span style="font-size:12px;color:rgba(255,255,255,0.3)">❤️ ${l.likes} 次</span>
+          </div>`
+        ).join('') + '</div>';
+      }
+    }
+  } catch(e) {
+    const content = document.getElementById('who-liked-content');
+    if (content) content.innerHTML = '<div style="color:rgba(255,255,255,0.3)">查询失败</div>';
+  }
+}
+async function verifyWhoLiked(postId) {
+  const saleId = document.getElementById('sale-id-input')?.value?.trim();
+  if (!saleId) { alert('请输入 Sale ID'); return; }
+  try {
+    const res = await fetch(API + '/api/posts/' + postId + '/who-liked', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({sale_id:saleId})});
+    const data = await res.json();
+    const content = document.getElementById('who-liked-content');
+    if (!content) return;
+    if (data.purchased) {
+      const likers = data.likers || [];
+      if (likers.length === 0) {
+        content.innerHTML = '<div style="padding:20px;color:rgba(255,255,255,0.3)">还没有人赞过这条帖子</div>';
+      } else {
+        content.innerHTML = '<div style="max-height:300px;overflow-y:auto">' + likers.map(l =>
+          `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05)">
+            <span style="font-size:14px;color:#4d96ff">👤 ${esc(l.id)}</span>
+            <span style="font-size:12px;color:rgba(255,255,255,0.3)">❤️ ${l.likes} 次</span>
+          </div>`
+        ).join('') + '</div>';
+      }
+    } else {
+      content.innerHTML = '<div style="color:rgba(255,255,255,0.6);padding:20px">验证失败，请确认 Sale ID 正确</div>';
+    }
+  } catch(e) { alert('验证失败'); }
+}
+
+// ===== 付费置顶 =====
+async function featurePost(postId) {
+  closeLongPress();
+  const t = i18n[currentLang];
+  if (!confirm('付费 $0.99 置顶这条吐槽？（支付后你的帖子将排在顶部）')) return;
+  try {
+    const res = await fetch(API + '/api/posts/' + postId + '/feature', {method:'POST'});
+    const data = await res.json();
+    if (data.payment_url) {
+      // 打开Gumroad支付页 - 付费后跳转回吐槽墙，自动检测并置顶
+      const returnUrl = window.location.origin + '/?featured=' + postId;
+      const payUrl = data.payment_url + '&return_url=' + encodeURIComponent(returnUrl);
+      window.open(payUrl, '_blank', 'width=500,height=700');
+      // 轮询检测置顶状态
+      const checkInterval = setInterval(async () => {
+        try {
+          // 直接调verify-payment（用户付完款后会自动置顶）
+          const checkRes = await fetch(API + '/api/posts/' + postId + '/verify-payment', {method:'POST'});
+          const checkData = await checkRes.json();
+          if (checkData.ok && checkData.featured) {
+            clearInterval(checkInterval);
+            alert('✅ 置顶成功！感谢支持！');
+            loadPosts();
+          }
+        } catch(e) {}
+      }, 3000);
+      // 120秒后停止轮询（给用户足够时间付款）
+      setTimeout(() => clearInterval(checkInterval), 120000);
+    } else {
+      alert('获取支付链接失败');
+    }
+  } catch(e) {
+    alert('请求失败');
+  }
+}
+
+// ===== 彩色弹幕选择器 =====
+const COLOR_OPTIONS = ['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#a855f7','#ff9f43','#f44336','#00bcd4','#e91e63','#4caf50','#ff4081','#76ff03','#d500f9','#ffab00'];
+function showColorPicker(postId) {
+  closeLongPress();
+  const overlay = document.createElement('div');
+  overlay.className = 'longpress-overlay';
+  overlay.innerHTML = `<div class="longpress-menu" onclick="event.stopPropagation()">
+    <div style="text-align:center;padding:6px 24px 12px;color:rgba(255,255,255,0.6);font-size:14px">🎨 选择弹幕颜色 · $0.49</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;padding:8px 24px 16px;justify-content:center">${COLOR_OPTIONS.map(c => `<div style="width:40px;height:40px;border-radius:50%;background:${c};cursor:pointer;border:2px solid rgba(255,255,255,0.1)" onclick="buyColor(${postId},'${c}')"></div>`).join('')}</div>
+    <div class="lp-close" onclick="closeLongPress()">取消</div>
+  </div>`;
+  overlay.addEventListener('click', closeLongPress);
+  document.body.appendChild(overlay);
+}
+async function buyColor(postId, color) {
+  closeLongPress();
+  if (!confirm('付费 $0.49 让这条吐槽变成彩色弹幕？')) return;
+  try {
+    const res = await fetch(API + '/api/posts/' + postId + '/color', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({color})});
+    const data = await res.json();
+    if (data.ok) {
+      alert('✅ 彩色弹幕已激活！刷新页面后生效。');
+    }
+  } catch(e) { alert('请求失败'); }
+}
+
+// ===== 打赏 =====
+async function tipPost(postId) {
+  closeLongPress();
+  if (!confirm('为这条吐槽打赏 $1 支持创作者？')) return;
+  try {
+    const res = await fetch(API + '/api/posts/' + postId + '/tip', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({amount:100})});
+    const data = await res.json();
+    if (data.payment_url) window.open(data.payment_url, '_blank', 'width=500,height=700');
+  } catch(e) { alert('请求失败'); }
+}
+
+// ===== 置顶增强：打赏也加在长按菜单里 =====
+function patchLongPressMenus() {
+  document.querySelectorAll('.longpress-menu .lp-item').forEach(el => {
+    if (el.textContent.includes('付费置顶')) {
+      const postIdMatch = el.getAttribute('onclick')?.match(/featurePost\((\d+)\)/);
+      if (postIdMatch) {
+        const pid = postIdMatch[1];
+        el.insertAdjacentHTML('afterend', `<div class="lp-item" onclick="tipPost(${pid})"><span style="font-size:20px">💎</span> 打赏这条吐槽 · $1</div>`);
+        el.insertAdjacentHTML('afterend', `<div class="lp-divider"></div>`);
+      }
+    }
+  });
+}
+
+// ===== 置顶30分钟 =====
+async function boostPost(postId) {
+  closeLongPress();
+  if (!confirm('付费 $0.49 置顶这条吐槽30分钟？')) return;
+  try {
+    const res = await fetch(API + '/api/posts/' + postId + '/boost', {method:'POST'});
+    const data = await res.json();
+    if (data.payment_url) {
+      window.open(data.payment_url, '_blank', 'width=500,height=700');
+      const ci = setInterval(async () => {
+        try {
+          const cr = await fetch(API + '/api/posts/' + postId + '/verify-boost', {method:'POST'});
+          const cd = await cr.json();
+          if (cd.ok) { clearInterval(ci); alert('OK boost!'); loadPosts(); }
+        } catch(e) {}
+      }, 3000);
+      setTimeout(() => clearInterval(ci), 120000);
+    }
+  } catch(e) {}
+}
+async function buyVIP() {
+  closeLongPress();
+  if (!confirm('VIP $2.99/月 去广告+弹幕免费+免费置顶')) return;
+  try {
+    const ip = localStorage.getItem('tucao_ip') || 'w' + Math.random().toString(36).slice(2,10);
+    localStorage.setItem('tucao_ip', ip);
+    const r = await fetch(API + '/api/vip/create', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ip_hash:ip})});
+    const d = await r.json();
+    if (d.payment_url) {
+      window.open(d.payment_url, '_blank', 'width=500,height=700');
+      const ci = setInterval(async () => {
+        try {
+          const cr = await fetch(API + '/api/vip/verify', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ip_hash:ip})});
+          const cd = await cr.json();
+          if (cd.ok) { clearInterval(ci); alert('VIP OK!'); location.reload(); }
+        } catch(e) {}
+      }, 3000);
+      setTimeout(() => clearInterval(ci), 120000);
+    }
+  } catch(e) {}
+}
+// VIP badge
+(async function(){
+  try {
+    const ip = localStorage.getItem('tucao_ip');
+    if (ip) {
+      const r = await fetch(API + '/api/vip/check', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ip_hash:ip})});
+      const d = await r.json();
+      if (d.is_vip) {
+        const el = document.createElement('div');
+        el.style.cssText = 'position:fixed;top:60px;right:10px;z-index:50;font-size:11px;background:linear-gradient(135deg,#ffd700,#ffaa00);color:#000;padding:2px 8px;border-radius:6px;font-weight:700';
+        el.textContent = 'VIP';
+        document.body.appendChild(el);
+        return;
+      }
+    }
+    const el = document.createElement('div');
+    el.style.cssText = 'position:fixed;top:60px;right:10px;z-index:50;font-size:11px;cursor:pointer;background:rgba(255,215,0,0.12);color:#ffd700;padding:2px 8px;border-radius:6px;border:1px solid rgba(255,215,0,0.25)';
+    el.textContent = 'VIP $2.99/mo';
+    el.onclick = buyVIP;
+    document.body.appendChild(el);
+  } catch(e) {}
+})();
+
+// ===== 推荐奖励系统 (Referral) =====
+async function showReferralModal() {
+  initShareUI();
+  const t = i18n[currentLang];
+  const overlay = document.createElement('div');
+  overlay.className = 'share-overlay';
+  overlay.innerHTML = `<div class="share-box" onclick="event.stopPropagation()" style="max-width:450px">
+    <button class="share-close" onclick="closeShare()">✕</button>
+    <h3>🏆 邀请好友</h3>
+    <div id="referral-content" style="text-align:center;padding:10px 0;color:rgba(255,255,255,0.4)">加载中...</div>
+  </div>`;
+  overlay.addEventListener('click', closeShare);
+  document.body.appendChild(overlay);
+  await loadReferralData();
+}
+
+async function loadReferralData() {
+  try {
+    const nick = document.getElementById('nick-input').value.trim() || '匿名吐槽';
+    const res = await fetch(API + '/api/referral/code', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({nickname:nick})
+    });
+    const data = await res.json();
+    const content = document.getElementById('referral-content');
+    if (!content) return;
+
+    if (data.error) {
+      content.innerHTML = `<div style="color:#ff6b6b;padding:20px">${data.error}</div>`;
+      return;
+    }
+
+    const shareLink = window.location.origin + '/?ref=' + data.code;
+    const invited = data.total_invited || 0;
+
+    content.innerHTML = `
+      <div style="margin-bottom:16px">
+        <div style="font-size:42px;margin-bottom:8px">🏆</div>
+        <div style="font-size:14px;color:rgba(255,255,255,0.5);margin-bottom:4px">你的专属推荐码</div>
+        <div style="font-size:32px;font-weight:900;letter-spacing:6px;background:linear-gradient(135deg,#ffd700,#ffaa00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;padding:8px 0">${data.code}</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;margin-bottom:12px">
+        <div style="font-size:13px;color:rgba(255,255,255,0.4)">已邀请好友</div>
+        <div style="font-size:28px;font-weight:700;color:#ffd93d">${invited} 人</div>
+      </div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:12px;background:rgba(77,150,255,0.08);border-radius:8px;padding:8px">
+        ⭐ 每邀请1人 → 你的吐槽获得「推荐之星」标志 + Trending权重+50%
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:8px">
+        <input id="referral-share-link" readonly value="${shareLink}" style="flex:1;height:38px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.08);color:#fff;padding:0 10px;outline:none;font-size:12px;text-align:center">
+        <button style="height:38px;padding:0 16px;border-radius:8px;border:none;background:#6bcb77;color:#fff;cursor:pointer;font-weight:600;font-size:13px" onclick="copyReferralLink()">复制链接</button>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+        <a class="share-btn twitter" href="https://twitter.com/intent/tweet?text=${encodeURIComponent('来吐槽墙匿名吐槽！用我的推荐码 ' + data.code + ' 获得 ⭐ 推荐之星！')}&url=${encodeURIComponent(shareLink)}" target="_blank" rel="noopener" style="flex:0 0 auto;padding:8px 16px;font-size:12px">𝕏 分享</a>
+        <a class="share-btn" href="https://web.whatsapp.com/send?text=${encodeURIComponent('🏆 来吐槽墙匿名吐槽吧！用我的邀请码 ' + data.code + ' 即可获得推荐之星！')}%20${encodeURIComponent(shareLink)}" target="_blank" rel="noopener" style="flex:0 0 auto;padding:8px 16px;font-size:12px">💬 WhatsApp</a>
+        <a class="share-btn" href="https://t.me/share/url?url=${encodeURIComponent(shareLink)}&text=${encodeURIComponent('🏆 来吐槽墙匿名吐槽！邀请码: ' + data.code)}" target="_blank" rel="noopener" style="flex:0 0 auto;padding:8px 16px;font-size:12px">✈️ Telegram</a>
+      </div>
+      <div style="margin-top:12px;border-top:1px solid rgba(255,255,255,0.06);padding-top:12px">
+        <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:6px">或被邀请的人发帖时输入推荐码：</div>
+        <div style="display:flex;gap:8px;justify-content:center">
+          <input id="referral-claim-input" style="width:140px;height:36px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.08);color:#fff;padding:0 10px;outline:none;font-size:14px;text-align:center;letter-spacing:4px;text-transform:uppercase" placeholder="输入推荐码" maxlength="6">
+          <button style="height:36px;padding:0 16px;border-radius:8px;border:none;background:linear-gradient(135deg,#ffd700,#ffaa00);color:#000;cursor:pointer;font-weight:700;font-size:13px" onclick="claimReferral()">领取奖励</button>
+        </div>
+      </div>
+    `;
+  } catch(e) {
+    const content = document.getElementById('referral-content');
+    if (content) content.innerHTML = '<div style="color:#ff6b6b;padding:20px">加载失败</div>';
+  }
+}
+
+async function claimReferral() {
+  const input = document.getElementById('referral-claim-input');
+  const code = input ? input.value.trim().toUpperCase() : '';
+  if (!code || code.length !== 6) { alert('请输入6位推荐码'); return; }
+  try {
+    const res = await fetch(API + '/api/referral/claim', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({code})
+    });
+    const data = await res.json();
+    if (data.ok) {
+      alert('✅ ' + data.message);
+      closeShare();
+    } else {
+      alert('❌ ' + (data.error || '领取失败'));
+    }
+  } catch(e) { alert('请求失败'); }
+}
+
+async function copyReferralLink() {
+  const input = document.getElementById('referral-share-link');
+  if (!input) return;
+  try {
+    await navigator.clipboard.writeText(input.value);
+    alert('✅ 链接已复制！');
+  } catch(e) {
+    input.select();
+    document.execCommand('copy');
+    alert('✅ 链接已复制！');
+  }
+}
+
+// ===== 自动检测 URL 中的推荐码 =====
+(function(){
+  const params = new URLSearchParams(window.location.search);
+  const refCode = params.get('ref');
+  if (refCode && refCode.length === 6) {
+    // 自动弹出推荐窗口
+    setTimeout(() => {
+      showReferralModal();
+      // 自动填入推荐码
+      setTimeout(() => {
+        const input = document.getElementById('referral-claim-input');
+        if (input) input.value = refCode.toUpperCase();
+      }, 500);
+    }, 2000);
+  }
+})();
+
+// ===== 在发帖时也显示推荐码输入选项 =====
+// 增强 submitPost 让用户发帖时输入推荐码
+const origSubmitPost = submitPost;
+submitPost = async function() {
+  const t = i18n[currentLang];
+  const content = document.getElementById('post-input').value.trim();
+  const nickname = document.getElementById('nick-input').value.trim() || t.post_anonymous;
+  const profession = document.getElementById('profession-select').value;
+  const target = document.getElementById('target-select').value;
+  if (!content) { alert(t.post_empty_alert); return; }
+  if (content.length > 500) { alert(t.post_max_alert); return; }
+
+  // 检查是否有推荐码（从 URL 参数或 localStorage）
+  let refCode = '';
+  const params = new URLSearchParams(window.location.search);
+  refCode = params.get('ref') || '';
+  if (!refCode) {
+    refCode = localStorage.getItem('tucao_ref_code') || '';
+  }
+  // 如果有推荐码，先领取奖励
+  if (refCode && refCode.length === 6) {
+    try {
+      await fetch(API + '/api/referral/claim', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({code: refCode.toUpperCase()})
+      });
+      localStorage.setItem('tucao_ref_code', refCode);
+    } catch(e) {}
+  }
+
+  try {
+    const res = await fetch(`${API}/api/posts`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({content, nickname, profession, target})
+    });
+    const data = await res.json();
+    if (!res.ok) { alert(data.error || t.post_fail_alert); return; }
+    document.getElementById('post-input').value = '';
+    if (danmakuEngine && data) {
+      danmakuEngine.addOne(data);
+      allPosts.unshift(data);
+      updateStats();
+    }
+  } catch(e) { alert(t.post_fail_alert); }
+};// ===== 广告轮播 =====
+const ADS = [
+  { title:'💻 推荐VPS：Vultr云服务器', desc:'建站/VPN/项目部署，全球机房，$2.99/月起', link:'https://www.vultr.com/?ref=GxaNJMJNQ8C3', btn:'🚀 去看看' },
+  { title:'💼 AI视觉创作 · 接单中', desc:'ComfyUI工作流/AI头像/电商产品图 · 快速交付', link:'javascript:void(0)', btn:'📧 联系站长', onclick:'copyEmail()' },
+  { title:'🚀 AI效率工具', desc:'ChatGPT提示词模板·1000+精选Prompts，工作效率翻倍', link:'https://bobotempes.gumroad.com/l/chatgpt-prompts', btn:'⚡ 获取' },
+  { title:'📦 CLI Toolkit Pro', desc:'开发者效率工具包，一键部署/监控/自动化', link:'https://bobotempes.gumroad.com/l/cli-toolkit', btn:'🛒 $9.99' },
+  { title:'📦 CSV Toolkit', desc:'CSV批量处理神器，合并/拆分/清洗一步到位', link:'https://bobotempes.gumroad.com/l/csv-toolkit', btn:'🛒 $12' },
+  { title:'📦 Excel Dashboard', desc:'专业Excel数据面板模板，可视化你的数据', link:'https://bobotempes.gumroad.com/l/excel-dashboard', btn:'🛒 $14.99' },
+  { title:'🤖 AI自动化工具', desc:'n8n工作流模板·Claude Code技能包，效率提升10倍', link:'https://bobotempes.gumroad.com/', btn:'⚡ 获取' },
+  { title:'🧘 每日冥想', desc:'10分钟缓解工作压力，免费冥想音频合集', link:'https://gumroad.com/discover?query=meditation', btn:'🎧 开始' },
+  { title:'💰 跨境电商资源', desc:'独立站运营干货·从0到1的全套教程', link:'https://gumroad.com/discover?query=ecommerce', btn:'📚 查看' },
+  { title:'📈 副业赚钱指南', desc:'从0开始做副业的实操手册，月入$1000+', link:'https://gumroad.com/discover?query=side+hustle', btn:'💰 了解' },
+  { title:'🌐 域名投资秘籍', desc:'低买高卖，AI辅助找出有潜力域名', link:'https://gumroad.com/discover?query=domain+investing', btn:'🌐 查看' },
+  { title:'🎨 设计师资源库', desc:'UI套件+图标+模板，一键打包下载', link:'https://gumroad.com/discover?query=design+resources', btn:'🎨 查看' },
+];
+let adIdx = 0;
+function rotateAd() {
+  const ad = ADS[adIdx % ADS.length];
+  adIdx++;
+  const el = document.getElementById('dynamic-ad');
+  if (!el) return;
+  document.getElementById('ad-title').textContent = ad.title;
+  document.getElementById('ad-desc').textContent = ad.desc;
+  const link = document.getElementById('ad-link');
+  link.href = ad.link;
+  link.textContent = ad.btn;
+  if (ad.onclick) { link.onclick = function(){ eval(ad.onclick); return false; }; link.href = 'javascript:void(0)'; }
+  else { link.onclick = null; }
+}
+setInterval(rotateAd, 15000);
+rotateAd();
+
+// ===== 启动 =====
+const dLang=detectLang();
+switchLang(dLang);
+initDanmakuEngine();
+// 恢复登录态
+setTimeout(() => restoreLogin(), 100);
+// 等引擎启动后再加载数据
+setTimeout(() => loadPosts(), 500);
+setInterval(() => loadPosts(), 30000);
+
+// ===== 今日劲爆吐槽弹窗（每日一次） =====
+async function showTodayBurn() {
+  try {
+    // 检查今天是否已经看过
+    const today = new Date().toDateString();
+    if (localStorage.getItem('tucao_burn_date') === today) return;
+    
+    const r = await fetch(API + '/api/today-burn');
+    const d = await r.json();
+    if (!d.burn) return;
+    
+    // 记录已看
+    localStorage.setItem('tucao_burn_date', today);
+    
+    // 延迟1.5秒弹出（让弹幕先渲染）
+    setTimeout(() => {
+      const overlay = document.createElement('div');
+      overlay.className = 'share-overlay';
+      overlay.onclick = () => overlay.remove();
+      overlay.innerHTML = `<div class="share-box" onclick="event.stopPropagation()" style="max-width:460px;padding:0;overflow:hidden;border-radius:24px;border:none;animation:fadeIn 0.3s">
+        <div style="background:linear-gradient(135deg,${d.color_from||'#4d96ff'},${d.color_to||'#5f27cd'});padding:40px 28px 30px;text-align:center">
+          <div style="font-size:48px;margin-bottom:8px">💬</div>
+          <div style="font-size:12px;opacity:0.6;letter-spacing:2px;margin-bottom:12px">🔥 今日劲爆吐槽</div>
+          <div style="font-size:18px;line-height:1.7;font-weight:600;white-space:pre-wrap">${d.burn}</div>
+        </div>
+        <div style="padding:16px 28px;display:flex;justify-content:space-between;align-items:center">
+          <span style="color:rgba(255,255,255,0.4);font-size:13px">❤️ ${d.likes||0} · 来自吐槽墙</span>
+          <div style="display:flex;gap:8px">
+            <button onclick="overlay.remove();" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#fff;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px">关闭</button>
+            <button onclick="shareBurn('${encodeURIComponent(d.burn)}','${d.share_url||''}');overlay.remove();" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px">📤 分享</button>
+          </div>
+        </div>
+      </div>`;
+      document.body.appendChild(overlay);
+    }, 1500);
+  } catch(e) {}
+}
+
+function shareBurn(text, url) {
+  const fullText = decodeURIComponent(text) + '\n\n' + (url || 'https://tucaowall.vip');
+  const encoded = encodeURIComponent(fullText);
+  const overlay = document.createElement('div');
+  overlay.className = 'share-overlay';
+  overlay.onclick = () => overlay.remove();
+  overlay.innerHTML = `<div class="share-box" onclick="event.stopPropagation()" style="max-width:380px;padding:20px;text-align:center">
+    <button class="share-close" onclick="this.closest('.share-overlay').remove()">✕</button>
+    <h3 style="margin-bottom:16px">📤 分享劲爆吐槽</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center">
+      <a class="share-btn twitter" href="https://twitter.com/intent/tweet?text=${encoded}" target="_blank">𝕏 Twitter</a>
+      <a class="share-btn" href="https://web.whatsapp.com/send?text=${encoded}" target="_blank">💬 WhatsApp</a>
+      <a class="share-btn" href="https://t.me/share/url?url=${encodeURIComponent(url||'https://tucaowall.vip')}&text=${text}" target="_blank">✈️ Telegram</a>
+      <a class="share-btn" href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url||'https://tucaowall.vip')}&quote=${text}" target="_blank">📘 Facebook</a>
+      <button class="share-btn" onclick="navigator.clipboard.writeText(decodeURIComponent('${text}'));alert('已复制！')" style="border:none;background:rgba(255,255,255,0.08);color:#fff;padding:10px 20px;border-radius:10px;cursor:pointer;font-size:13px">📋 复制</button>
+    </div>
+  </div>`;
+  document.body.appendChild(overlay);
+}
+
+// 加载后弹出今日劲爆吐槽
+setTimeout(() => showTodayBurn(), 3000);
+
+// ===== 底部推广链接栏 =====
+(function(){
+  var bar = document.createElement('div');
+  bar.style.cssText = 'position:fixed;bottom:0;left:0;width:100%;z-index:100;background:linear-gradient(135deg,rgba(26,26,46,0.95),rgba(22,33,62,0.95));backdrop-filter:blur(12px);border-top:1px solid rgba(255,255,255,0.06);padding:8px 12px;display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;font-size:13px';
+  bar.innerHTML = '<span style="color:rgba(255,255,255,0.5)">🔗</span>'
+    + '<a href="/blog.html" target="_blank" style="color:#ffd93d;text-decoration:none">📖 编程教程</a>'
+    + '<a href="/api-docs" target="_blank" style="color:#6bcb77;text-decoration:none">🔌 AI API</a>'
+    + '<a href="https://bobotempes.gumroad.com/l/chatgpt-prompts" target="_blank" style="color:#ff6b6b;text-decoration:none">🔥 提示词</a>'
+    + '<a href="https://bobotempes.gumroad.com/l/cli-toolkit" target="_blank" style="color:#4d96ff;text-decoration:none">🛠 CLI工具</a>'
+    + '<button onclick="this.parentElement.remove()" style="background:none;border:none;color:rgba(255,255,255,0.2);cursor:pointer;font-size:16px;padding:0 4px">✕</button>';
+  document.body.appendChild(bar);
+})();
+
+// ===== 原有的末尾代码继续 =====
+try {
+  fetch(API + '/api/analytics/pageview', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({path:window.location.pathname, referrer:document.referrer || ''})
+  });
+} catch(e){}
+
+// ===== PWA注册 + 自动更新 =====
+if ('serviceWorker' in navigator) {
+  // 同时注册新路径（sw.js），兼容旧版
+  navigator.serviceWorker.register('/sw.js').catch(function(){});
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/service-worker.js').then(function(reg) {
+      console.log('SW registered:', reg.scope);
+      // 检测更新
+      reg.addEventListener('updatefound', function() {
+        const newSW = reg.installing;
+        newSW.addEventListener('statechange', function() {
+          if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+            // 新版本可用，立即激活
+            newSW.postMessage({action: 'skipWaiting'});
+            window.location.reload();
+          }
+        });
+      });
+    }, function(err) {
+      console.log('SW failed:', err);
+    });
+  });
+  // 监听controller变化，自动刷新
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', function() {
+    if (refreshing) return;
+    refreshing = true;
+    window.location.reload();
+  });
+}
+</script>
+</body>
+</html>
